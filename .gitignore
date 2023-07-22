@@ -5,3 +5,4 @@ __pycache__
 *.js
 build
 *.egg-info
+TODO.md
