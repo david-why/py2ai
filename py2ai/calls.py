@@ -1,6 +1,7 @@
 import ast
 from typing import TYPE_CHECKING, Callable, Dict, List, Literal, Optional, Tuple, Union
 import random as _random, string
+import builtins
 from .blockly import Block
 
 if TYPE_CHECKING:
@@ -301,10 +302,12 @@ def web_delete(comp, **kwargs):
 
 @_register(['text'])
 def obfs_text(comp, text):
+    if not isinstance(text, ast.Constant) or not isinstance(text.value, builtins.str):
+        raise ValueError('obfs_text argument must be a literal string')
     return Block(
         'obfuscated_text',
         mutations={'confounder': ''.join(_random.choices(string.ascii_lowercase, k=8))},
-        fields={'TEXT': text}
+        fields={'TEXT': text.value}
     )
 
 
