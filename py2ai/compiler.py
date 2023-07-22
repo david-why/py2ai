@@ -938,6 +938,12 @@ class PythonCompiler(ast.NodeVisitor):
             return self._get_proc_block(
                 '__py2ai__ge__', ['x', 'y'], [self.visit(left), self.visit(right)]
             )
+        if isinstance(op, ast.In):
+            return self._get_proc_block(
+                '__py2ai__contains__',
+                ['obj', 'item'],
+                [self.visit(right), self.visit(left)],  # wtf
+            )
         raise NotSupportedError(f'Compare operator {op.__class__.__name__}')
 
     def visit_If(self, node):
