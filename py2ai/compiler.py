@@ -142,10 +142,14 @@ class PythonCompiler(ast.NodeVisitor):
             mutation_eventparams=[name] if eventparam else None,
         )
 
-    def _set_var_block(self, name: str, value: Block):
+    def _set_var_block(
+        self, name: str, value: Block, force_global: Optional[bool] = None
+    ):
+        if force_global is None:
+            force_global = self._global and name not in self._locals
         return Block(
             'lexical_variable_set',
-            fields={'VAR': ('global ' if self._global else '') + name},
+            fields={'VAR': ('global ' if force_global else '') + name},
             values={'VALUE': value},
         )
 
@@ -170,10 +174,14 @@ class PythonCompiler(ast.NodeVisitor):
             if var in self._scopes[i]:
                 return
 
+    def _if_ret(self) -> Block:
+        with self._local('__py2ai__funcret__'):
+            return self.visit(ast.parse('if __py2ai__funcret__ == 2: break').body[0])
+
     def _nothing(self, node):
         return
 
-    visit_ImportFrom = visit_Import = _nothing
+    visit_ImportFrom = visit_Import = visit_Pass = _nothing
 
     def compile(self, root: ast.Module):
         self._ctx = {}
@@ -389,7 +397,11 @@ class PythonCompiler(ast.NodeVisitor):
                 fields={'COMPONENT_SELECTOR': node.id},
             )
         is_global = None
-        if not self._global and node.id not in self._scopes[-1]:
+        if (
+            not self._global
+            and node.id not in self._scopes[-1]
+            and node.id not in self._locals
+        ):
             is_global = True
         return self._get_var_block(node.id, is_global)
 
@@ -598,13 +610,25 @@ class PythonCompiler(ast.NodeVisitor):
                 self.visit(ast.AnnAssign(target=target, annotation=typ, value=None))
                 return
             else:
-                self._scopes[-1].add(target.id)
+                if target.id not in self._globals[-1]:
+                    self._scopes[-1].add(target.id)
                 if self._global:
                     self._global_assigns[target.id] = self.visit(node.value)
                     return
-                    return self._init_var_block(target.id, self.visit(node.value))
-                return self._set_var_block(target.id, self.visit(node.value))
+                return self._set_var_block(
+                    target.id,
+                    self.visit(node.value),
+                    True if target.id in self._globals[-1] else None,
+                )
         raise NotSupportedError(f'Assign to {target.__class__.__name__} target')
+
+    def visit_AugAssign(self, node):
+        return self.visit(
+            ast.Assign(
+                targets=[node.target],
+                value=ast.BinOp(left=node.target, op=node.op, right=node.value),
+            )
+        )
 
     def visit_Subscript(self, node):
         return self._get_proc_block(
@@ -612,6 +636,9 @@ class PythonCompiler(ast.NodeVisitor):
             ['obj', 'key'],
             [self.visit(node.value), self.visit(node.slice)],
         )
+
+    def visit_Global(self, node):
+        self._globals[-1].update(node.names)
 
     def visit_FunctionDef(self, node):
         args = [arg.arg for arg in node.args.posonlyargs + node.args.args]
@@ -662,6 +689,16 @@ class PythonCompiler(ast.NodeVisitor):
         self._annots.pop()
         self._globals.pop()
         return proc
+
+    def visit_Return(self, node):
+        blk = self._set_var_block(
+            '__py2ai__funcret__', Block('math_number', fields={'NUM': '2'}), False
+        )
+        if node.value is not None:
+            blk.chain(
+                self._set_var_block('__py2ai__return__', self.visit(node.value), False)
+            )
+        return blk.chain(Block('controls_break'))
 
     def visit_Attribute(self, node):
         if not isinstance(node.value, ast.Name):
@@ -898,6 +935,20 @@ class PythonCompiler(ast.NodeVisitor):
             f'BinOp unsupported operator {node.op.__class__.__name__}'
         )
 
+    def visit_BoolOp(self, node):
+        op = {ast.And: 'AND', ast.Or: 'OR', ast.AST: None}[node.op.__class__]
+        return Block(
+            'logic_operation',
+            mutations={'items': str(len(node.values))},
+            fields={'OP': op},
+            values={
+                (
+                    'A' if i == 0 else 'B' if i == 1 else f'BOOL{i}'
+                ): self._get_proc_block('__py2ai__bool__', ['x'], [self.visit(v)])
+                for i, v in enumerate(node.values)
+            },
+        )
+
     def visit_Compare(self, node):
         if len(node.ops) > 1:
             return self.visit(
@@ -946,6 +997,14 @@ class PythonCompiler(ast.NodeVisitor):
             )
         raise NotSupportedError(f'Compare operator {op.__class__.__name__}')
 
+    def visit_Raise(self, node):
+        if isinstance(node.exc, ast.Name):
+            if node.exc.id == 'CloseScreen':
+                return Block('controls_closeScreen')
+            if node.exc.id == 'CloseApplication':
+                return Block('controls_closeApplication')
+        raise NotSupportedError('Raise exception not supported')
+
     def visit_If(self, node):
         ifs = [node]
         while len(ifs[-1].orelse) == 1 and isinstance(ifs[-1].orelse[0], ast.If):
@@ -971,6 +1030,10 @@ class PythonCompiler(ast.NodeVisitor):
             },
             statements=dos,
         )
+
+    def visit_Break(self, node):
+        cast(None, node)
+        return Block('controls_break')
 
     def visit_For(self, node):
         if node.orelse:
@@ -1023,7 +1086,7 @@ class PythonCompiler(ast.NodeVisitor):
                     'STEP': self.visit(step),
                 },
                 statements={'DO': blk} if blk else None,
-            )
+            ).chain(self._if_ret())
         with self._local(node.target.id):
             blk = self.visit_nodes(node.body)
             return Block(
@@ -1035,4 +1098,4 @@ class PythonCompiler(ast.NodeVisitor):
                     )
                 },
                 statements=blk and {'DO': blk},
-            )
+            ).chain(self._if_ret())

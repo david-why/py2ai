@@ -126,6 +126,13 @@ class Block:
     def to_xml(self) -> str:
         return ET.tostring(self._to_xml()).replace(b'\n', b'&#10;').decode()
 
+    def chain(self, block: 'Block') -> 'Block':
+        cur = self
+        while cur.next is not None:
+            cur = cur.next
+        cur.next = block
+        return self
+
     @classmethod
     def _from_xml(cls, xml):
         kwargs = {

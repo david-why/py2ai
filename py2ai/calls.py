@@ -312,7 +312,7 @@ def obfs_text(comp, text):
     return Block(
         'obfuscated_text',
         mutations={'confounder': ''.join(_random.choices(string.ascii_lowercase, k=8))},
-        fields={'TEXT': text.value}
+        fields={'TEXT': text.value},
     )
 
 
@@ -345,6 +345,11 @@ def randrange2(comp, start, stop):
             ),
         },
     )
+
+
+@_aregister('random', ['a', 'b'])
+def randint(comp, a, b):
+    return Block('math_random_int', values={'FROM': comp.visit(a), 'TO': comp.visit(b)})
 
 
 @_aregister('json', ['obj'])
