@@ -65,6 +65,7 @@ class Block:
         mutations: Optional[Dict[str, str]] = None,
         mutation_args: Optional[List[str]] = None,
         mutation_localnames: Optional[List[str]] = None,
+        mutation_eventparams: Optional[List[str]] = None,
         fields: Optional[Dict[str, str]] = None,
         values: Optional[Dict[str, 'Block']] = None,
         statements: Optional[Dict[str, 'Block']] = None,
@@ -76,6 +77,7 @@ class Block:
         self.mutations = mutations
         self.mutation_args = mutation_args
         self.mutation_localnames = mutation_localnames
+        self.mutation_eventparams = mutation_eventparams
         self.fields = fields or {}
         self.values = values or {}
         self.statements = statements or {}
@@ -91,6 +93,7 @@ class Block:
             self.mutations is not None
             or self.mutation_args is not None
             or self.mutation_localnames is not None
+            or self.mutation_eventparams is not None
         ):
             mutation = S(
                 block,
@@ -103,6 +106,9 @@ class Block:
             if self.mutation_localnames is not None:
                 for name in self.mutation_localnames:
                     S(mutation, 'localname', name=name)
+            if self.mutation_eventparams is not None:
+                for name in self.mutation_eventparams:
+                    S(mutation, 'eventparam', name=name)
         for name, value in self.fields.items():
             field = S(block, 'field', name=name)
             field.text = value

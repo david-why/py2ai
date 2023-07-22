@@ -57,6 +57,11 @@ def str(comp, __value):
     return comp._get_proc_block('__py2ai__str__', ['x'], [comp.visit(__value)])
 
 
+@_register(['__value'], 'len')
+def _len(comp, __value):
+    return comp._get_proc_block('__py2ai__len__', ['obj'], [comp.visit(__value)])
+
+
 @_register(['stop'], 'range')
 def range1(comp, stop):
     return comp._get_proc_block(

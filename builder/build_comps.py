@@ -51,9 +51,10 @@ stmts = [
 for page in pages:
     print(f'building page {page["name"]}')
     for comp_name, comp in page['contents'].items():
+        comp_name = comp_name if comp_name != 'Screen' else 'Form'
         print(f'building component {comp_name}')
         cls = ast.ClassDef(
-            name=comp_name if comp_name != 'Screen' else 'Form',
+            name=comp_name,
             bases=[ast.Name(id='Component', ctx=ast.Load())],
             keywords=[],
             body=[
@@ -194,6 +195,44 @@ for page in pages:
                 ),
                 body=[ast.Expr(value=ast.Constant(value=doc)), not_implemented],
                 decorator_list=[],
+                returns=ast.Name(id='None', ctx=ast.Load()),
+            )
+            cls.body.append(stmt)
+            stmt = _function(
+                name=f'on_any_{event_name}',
+                args=ast.arguments(
+                    args=[],
+                    posonlyargs=[
+                        ast.arg(
+                            arg='callback',
+                            annotation=ast.Subscript(
+                                value=ast.Name(id='Callable', ctx=ast.Load()),
+                                slice=ast.Tuple(
+                                    elts=[
+                                        ast.List(
+                                            elts=[
+                                                ast.Constant(value=comp_name),
+                                                ast.Name(id='bool', ctx=ast.Load()),
+                                            ]
+                                            + [
+                                                ast.Name(id=x['type'], ctx=ast.Load())
+                                                for x in event['args']
+                                            ],
+                                            ctx=ast.Load(),
+                                        ),
+                                        ast.Name(id='None', ctx=ast.Load()),
+                                    ],
+                                    ctx=ast.Load(),
+                                ),
+                                ctx=ast.Load(),
+                            ),
+                        ),
+                    ],
+                    kwonlyargs=[],
+                    defaults=[],
+                ),
+                body=[ast.Expr(value=ast.Constant(value=doc)), not_implemented],
+                decorator_list=[ast.Name(id='staticmethod', ctx=ast.Load())],
                 returns=ast.Name(id='None', ctx=ast.Load()),
             )
             cls.body.append(stmt)

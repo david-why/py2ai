@@ -134,7 +134,17 @@ class Button(Component):
         """Click()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_Click(callback: Callable[['Button', bool], None], /) -> None:
+        """Click()"""
+        raise NotImplementedError
+
     def on_GotFocus(self, callback: Callable[[], None], /) -> None:
+        """GotFocus()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_GotFocus(callback: Callable[['Button', bool], None], /) -> None:
         """GotFocus()"""
         raise NotImplementedError
 
@@ -142,7 +152,17 @@ class Button(Component):
         """LongClick()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_LongClick(callback: Callable[['Button', bool], None], /) -> None:
+        """LongClick()"""
+        raise NotImplementedError
+
     def on_LostFocus(self, callback: Callable[[], None], /) -> None:
+        """LostFocus()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_LostFocus(callback: Callable[['Button', bool], None], /) -> None:
         """LostFocus()"""
         raise NotImplementedError
 
@@ -150,7 +170,17 @@ class Button(Component):
         """TouchDown()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_TouchDown(callback: Callable[['Button', bool], None], /) -> None:
+        """TouchDown()"""
+        raise NotImplementedError
+
     def on_TouchUp(self, callback: Callable[[], None], /) -> None:
+        """TouchUp()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_TouchUp(callback: Callable[['Button', bool], None], /) -> None:
         """TouchUp()"""
         raise NotImplementedError
 
@@ -252,11 +282,26 @@ class CheckBox(Component):
         """Changed()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_Changed(callback: Callable[['CheckBox', bool], None], /) -> None:
+        """Changed()"""
+        raise NotImplementedError
+
     def on_GotFocus(self, callback: Callable[[], None], /) -> None:
         """GotFocus()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_GotFocus(callback: Callable[['CheckBox', bool], None], /) -> None:
+        """GotFocus()"""
+        raise NotImplementedError
+
     def on_LostFocus(self, callback: Callable[[], None], /) -> None:
+        """LostFocus()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_LostFocus(callback: Callable[['CheckBox', bool], None], /) -> None:
         """LostFocus()"""
         raise NotImplementedError
 
@@ -411,7 +456,17 @@ class DatePicker(Component):
         """AfterDateSet()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_AfterDateSet(callback: Callable[['DatePicker', bool], None], /) -> None:
+        """AfterDateSet()"""
+        raise NotImplementedError
+
     def on_GotFocus(self, callback: Callable[[], None], /) -> None:
+        """GotFocus()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_GotFocus(callback: Callable[['DatePicker', bool], None], /) -> None:
         """GotFocus()"""
         raise NotImplementedError
 
@@ -419,11 +474,26 @@ class DatePicker(Component):
         """LostFocus()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_LostFocus(callback: Callable[['DatePicker', bool], None], /) -> None:
+        """LostFocus()"""
+        raise NotImplementedError
+
     def on_TouchDown(self, callback: Callable[[], None], /) -> None:
         """TouchDown()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_TouchDown(callback: Callable[['DatePicker', bool], None], /) -> None:
+        """TouchDown()"""
+        raise NotImplementedError
+
     def on_TouchUp(self, callback: Callable[[], None], /) -> None:
+        """TouchUp()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_TouchUp(callback: Callable[['DatePicker', bool], None], /) -> None:
         """TouchUp()"""
         raise NotImplementedError
 
@@ -530,6 +600,11 @@ class Image(Component):
         raise NotImplementedError
 
     def on_Click(self, callback: Callable[[], None], /) -> None:
+        """Click()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_Click(callback: Callable[['Image', bool], None], /) -> None:
         """Click()"""
         raise NotImplementedError
 
@@ -812,7 +887,17 @@ class ListPicker(Component):
         """AfterPicking()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_AfterPicking(callback: Callable[['ListPicker', bool], None], /) -> None:
+        """AfterPicking()"""
+        raise NotImplementedError
+
     def on_BeforePicking(self, callback: Callable[[], None], /) -> None:
+        """BeforePicking()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_BeforePicking(callback: Callable[['ListPicker', bool], None], /) -> None:
         """BeforePicking()"""
         raise NotImplementedError
 
@@ -820,7 +905,17 @@ class ListPicker(Component):
         """GotFocus()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_GotFocus(callback: Callable[['ListPicker', bool], None], /) -> None:
+        """GotFocus()"""
+        raise NotImplementedError
+
     def on_LostFocus(self, callback: Callable[[], None], /) -> None:
+        """LostFocus()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_LostFocus(callback: Callable[['ListPicker', bool], None], /) -> None:
         """LostFocus()"""
         raise NotImplementedError
 
@@ -828,7 +923,17 @@ class ListPicker(Component):
         """TouchDown()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_TouchDown(callback: Callable[['ListPicker', bool], None], /) -> None:
+        """TouchDown()"""
+        raise NotImplementedError
+
     def on_TouchUp(self, callback: Callable[[], None], /) -> None:
+        """TouchUp()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_TouchUp(callback: Callable[['ListPicker', bool], None], /) -> None:
         """TouchUp()"""
         raise NotImplementedError
 
@@ -1013,6 +1118,11 @@ class ListView(Component):
         """AfterPicking()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_AfterPicking(callback: Callable[['ListView', bool], None], /) -> None:
+        """AfterPicking()"""
+        raise NotImplementedError
+
 class Notifier(Component):
     __data__ = {'desc': 'The Notifier component displays alert messages and creates Android log entries through\n an assortment of methods.', 'properties': [{'name': 'BackgroundColor', 'type': 'enums.Color', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies the background color for alerts (not dialogs).'}, {'name': 'NotifierLength', 'type': 'int', 'ro': False, 'do': True, 'bo': False, 'desc': 'Specifies the length of time that the alert is shown â\x80\x93 either â\x80\x9cshortâ\x80\x9d or â\x80\x9clongâ\x80\x9d.'}, {'name': 'TextColor', 'type': 'enums.Color', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies the text color for alerts (not dialogs).'}], 'events': [{'name': 'AfterChoosing', 'args': [{'name': 'choice', 'type': 'str'}], 'desc': 'Event after the user has made a selection for\n ShowChooseDialog.'}, {'name': 'AfterTextInput', 'args': [{'name': 'response', 'type': 'str'}], 'desc': 'Event raised after the user has responded to ShowTextDialog.'}, {'name': 'ChoosingCanceled', 'args': [], 'desc': 'Event raised when the user cancels choosing an option.\n ShowChooseDialog.'}, {'name': 'TextInputCanceled', 'args': [], 'desc': 'Event raised when the user cancels\n ShowPasswordDialog, or\n ShowTextDialog.'}], 'methods': [{'name': 'DismissProgressDialog', 'args': [], 'returns': None, 'desc': 'Dismisses the alert created by the ShowProgressDialog block'}, {'name': 'LogError', 'args': [{'name': 'message', 'type': 'str'}], 'returns': None, 'desc': 'Writes an error message to the Android system log. See the Google Android documentation for\n how to access the log.'}, {'name': 'LogInfo', 'args': [{'name': 'message', 'type': 'str'}], 'returns': None, 'desc': 'Writes an information message to the Android log.'}, {'name': 'LogWarning', 'args': [{'name': 'message', 'type': 'str'}], 'returns': None, 'desc': 'Writes a warning message to the Android log. See the Google Android documentation for how to\n access the log.'}, {'name': 'ShowAlert', 'args': [{'name': 'notice', 'type': 'str'}], 'returns': None, 'desc': 'Display a temporary notification.'}, {'name': 'ShowChooseDialog', 'args': [{'name': 'message', 'type': 'str'}, {'name': 'title', 'type': 'str'}, {'name': 'button1Text', 'type': 'str'}, {'name': 'button2Text', 'type': 'str'}, {'name': 'cancelable', 'type': 'bool'}], 'returns': None, 'desc': 'Shows a dialog box with two buttons, from which the user can choose. If cancelable is\n true there will be an additional CANCEL button. Pressing a button will raise\n the AfterChoosing event. The â\x80\x9cchoiceâ\x80\x9d parameter to\n AfterChoosing will be the text on the button that was pressed, or â\x80\x9cCancelâ\x80\x9d if\n the CANCEL button was pressed. If canceled, the TextInputCanceled event will also\n run.'}, {'name': 'ShowMessageDialog', 'args': [{'name': 'message', 'type': 'str'}, {'name': 'title', 'type': 'str'}, {'name': 'buttonText', 'type': 'str'}], 'returns': None, 'desc': 'Display an alert dialog with a single button that dismisses the alert.'}, {'name': 'ShowPasswordDialog', 'args': [{'name': 'message', 'type': 'str'}, {'name': 'title', 'type': 'str'}, {'name': 'cancelable', 'type': 'bool'}], 'returns': None, 'desc': 'Shows a dialog box where the user can enter password (input is masked), after which the\n AfterTextInput event will be raised. If cancelable is true\n there will be an additional CANCEL button. The AfterTextInput and\n TextInputCanceled events behave the same way as described in\n ShowTextDialog.'}, {'name': 'ShowProgressDialog', 'args': [{'name': 'message', 'type': 'str'}, {'name': 'title', 'type': 'str'}], 'returns': None, 'desc': 'Shows a dialog box with an optional title and message (use empty strings if they are not\n wanted). This dialog box contains a spinning artifact to indicate that the program is working.\n It cannot be canceled by the user but must be dismissed by the App Inventor Program by using\n the DismissProgressDialog method.'}, {'name': 'ShowTextDialog', 'args': [{'name': 'message', 'type': 'str'}, {'name': 'title', 'type': 'str'}, {'name': 'cancelable', 'type': 'bool'}], 'returns': None, 'desc': 'Shows a dialog box where the user can enter text, after which the\n AfterTextInput  event will be raised. If cancelable is true\n there will be an additional CANCEL button. Entering text will raise the\n AfterTextInput event. The â\x80\x9cresponseâ\x80\x9d parameter to\n AfterTextInput  will be the text that was entered, or â\x80\x9cCancelâ\x80\x9d if the CANCEL\n button was pressed. If canceled, the TextInputCanceled event will also run.'}]}
 
@@ -1069,7 +1179,17 @@ class Notifier(Component):
         """AfterChoosing(choice)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_AfterChoosing(callback: Callable[['Notifier', bool, str], None], /) -> None:
+        """AfterChoosing(choice)"""
+        raise NotImplementedError
+
     def on_AfterTextInput(self, callback: Callable[[str], None], /) -> None:
+        """AfterTextInput(response)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_AfterTextInput(callback: Callable[['Notifier', bool, str], None], /) -> None:
         """AfterTextInput(response)"""
         raise NotImplementedError
 
@@ -1077,7 +1197,17 @@ class Notifier(Component):
         """ChoosingCanceled()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_ChoosingCanceled(callback: Callable[['Notifier', bool], None], /) -> None:
+        """ChoosingCanceled()"""
+        raise NotImplementedError
+
     def on_TextInputCanceled(self, callback: Callable[[], None], /) -> None:
+        """TextInputCanceled()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_TextInputCanceled(callback: Callable[['Notifier', bool], None], /) -> None:
         """TextInputCanceled()"""
         raise NotImplementedError
 
@@ -1198,7 +1328,17 @@ class PasswordTextBox(Component):
         """GotFocus()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_GotFocus(callback: Callable[['PasswordTextBox', bool], None], /) -> None:
+        """GotFocus()"""
+        raise NotImplementedError
+
     def on_LostFocus(self, callback: Callable[[], None], /) -> None:
+        """LostFocus()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_LostFocus(callback: Callable[['PasswordTextBox', bool], None], /) -> None:
         """LostFocus()"""
         raise NotImplementedError
 
@@ -1346,7 +1486,17 @@ class Form(Component):
         """BackPressed()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_BackPressed(callback: Callable[['Form', bool], None], /) -> None:
+        """BackPressed()"""
+        raise NotImplementedError
+
     def on_ErrorOccurred(self, callback: Callable[[Component, str, int, str], None], /) -> None:
+        """ErrorOccurred(component, functionName, errorNumber, message)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_ErrorOccurred(callback: Callable[['Form', bool, Component, str, int, str], None], /) -> None:
         """ErrorOccurred(component, functionName, errorNumber, message)"""
         raise NotImplementedError
 
@@ -1354,7 +1504,17 @@ class Form(Component):
         """Initialize()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_Initialize(callback: Callable[['Form', bool], None], /) -> None:
+        """Initialize()"""
+        raise NotImplementedError
+
     def on_OtherScreenClosed(self, callback: Callable[[str, Any], None], /) -> None:
+        """OtherScreenClosed(otherScreenName, result)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_OtherScreenClosed(callback: Callable[['Form', bool, str, Any], None], /) -> None:
         """OtherScreenClosed(otherScreenName, result)"""
         raise NotImplementedError
 
@@ -1362,11 +1522,26 @@ class Form(Component):
         """PermissionDenied(component, functionName, permissionName)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_PermissionDenied(callback: Callable[['Form', bool, Component, str, str], None], /) -> None:
+        """PermissionDenied(component, functionName, permissionName)"""
+        raise NotImplementedError
+
     def on_PermissionGranted(self, callback: Callable[[str], None], /) -> None:
         """PermissionGranted(permissionName)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_PermissionGranted(callback: Callable[['Form', bool, str], None], /) -> None:
+        """PermissionGranted(permissionName)"""
+        raise NotImplementedError
+
     def on_ScreenOrientationChanged(self, callback: Callable[[], None], /) -> None:
+        """ScreenOrientationChanged()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_ScreenOrientationChanged(callback: Callable[['Form', bool], None], /) -> None:
         """ScreenOrientationChanged()"""
         raise NotImplementedError
 
@@ -1460,6 +1635,11 @@ class Slider(Component):
         """PositionChanged(thumbPosition)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_PositionChanged(callback: Callable[['Slider', bool, int], None], /) -> None:
+        """PositionChanged(thumbPosition)"""
+        raise NotImplementedError
+
 class Spinner(Component):
     __data__ = {'desc': 'A Spinner component that displays a dialog with a list of elements. These elements can be set\n in the Designer or Blocks Editor by setting the ElementsFromString property to\n a comma-separated list of values (for example, choice 1, choice 2, choice 3) or by setting the\n Elements property to a List in the Blocks editor. Spinners are created with\n the first item already selected, so selecting it does not generate an\n AfterSelecting event. Consequently itâ\x80\x99s useful to make the first Spinner item\n be a non-choice like â\x80\x9cSelect from belowâ\x80¦â\x80\x9d.', 'properties': [{'name': 'Elements', 'type': 'list', 'ro': False, 'do': False, 'bo': True, 'desc': 'Specifies the list of choices to display.'}, {'name': 'ElementsFromString', 'type': 'str', 'ro': False, 'do': False, 'bo': False, 'desc': 'Set the list of choices from a string of comma-separated values.'}, {'name': 'Height', 'type': 'int', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies the Spinnerâ\x80\x99s vertical height, measured in pixels.'}, {'name': 'HeightPercent', 'type': 'int', 'ro': False, 'do': False, 'bo': True, 'desc': 'Specifies the Spinnerâ\x80\x99s vertical height as a percentage\n of the Screenâ\x80\x99s Height.'}, {'name': 'Prompt', 'type': 'str', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies the text used for the title of the Spinner window.'}, {'name': 'Selection', 'type': 'str', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies the current selected item in the Spinner.'}, {'name': 'SelectionIndex', 'type': 'int', 'ro': False, 'do': False, 'bo': True, 'desc': 'Set the Spinner selection to the element at the given index.\n If an attempt is made to set this to a number less than 1 or greater than the number of\n items in the Spinner, SelectionIndex will be set to 0, and Selection\n will be set to the empty text.'}, {'name': 'Visible', 'type': 'bool', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies whether the Spinner should be visible on the screen.  Value is true\n if the Spinner is showing and false if hidden.'}, {'name': 'Width', 'type': 'int', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies the horizontal width of the Spinner, measured in pixels.'}, {'name': 'WidthPercent', 'type': 'int', 'ro': False, 'do': False, 'bo': True, 'desc': 'Specifies the horizontal width of the Spinner as a percentage\n of the Screenâ\x80\x99s Width.'}], 'events': [{'name': 'AfterSelecting', 'args': [{'name': 'selection', 'type': 'str'}], 'desc': 'Event called after the user selects an item from the dropdown list.'}], 'methods': [{'name': 'DisplayDropdown', 'args': [], 'returns': None, 'desc': 'Displays the dropdown list for selection, same action as when the user clicks on the spinner.'}]}
 
@@ -1550,6 +1730,11 @@ class Spinner(Component):
         raise NotImplementedError
 
     def on_AfterSelecting(self, callback: Callable[[str], None], /) -> None:
+        """AfterSelecting(selection)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_AfterSelecting(callback: Callable[['Spinner', bool, str], None], /) -> None:
         """AfterSelecting(selection)"""
         raise NotImplementedError
 
@@ -1683,11 +1868,26 @@ class Switch(Component):
         """Changed()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_Changed(callback: Callable[['Switch', bool], None], /) -> None:
+        """Changed()"""
+        raise NotImplementedError
+
     def on_GotFocus(self, callback: Callable[[], None], /) -> None:
         """GotFocus()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_GotFocus(callback: Callable[['Switch', bool], None], /) -> None:
+        """GotFocus()"""
+        raise NotImplementedError
+
     def on_LostFocus(self, callback: Callable[[], None], /) -> None:
+        """LostFocus()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_LostFocus(callback: Callable[['Switch', bool], None], /) -> None:
         """LostFocus()"""
         raise NotImplementedError
 
@@ -1819,7 +2019,17 @@ class TextBox(Component):
         """GotFocus()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_GotFocus(callback: Callable[['TextBox', bool], None], /) -> None:
+        """GotFocus()"""
+        raise NotImplementedError
+
     def on_LostFocus(self, callback: Callable[[], None], /) -> None:
+        """LostFocus()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_LostFocus(callback: Callable[['TextBox', bool], None], /) -> None:
         """LostFocus()"""
         raise NotImplementedError
 
@@ -1966,7 +2176,17 @@ class TimePicker(Component):
         """AfterTimeSet()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_AfterTimeSet(callback: Callable[['TimePicker', bool], None], /) -> None:
+        """AfterTimeSet()"""
+        raise NotImplementedError
+
     def on_GotFocus(self, callback: Callable[[], None], /) -> None:
+        """GotFocus()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_GotFocus(callback: Callable[['TimePicker', bool], None], /) -> None:
         """GotFocus()"""
         raise NotImplementedError
 
@@ -1974,11 +2194,26 @@ class TimePicker(Component):
         """LostFocus()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_LostFocus(callback: Callable[['TimePicker', bool], None], /) -> None:
+        """LostFocus()"""
+        raise NotImplementedError
+
     def on_TouchDown(self, callback: Callable[[], None], /) -> None:
         """TouchDown()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_TouchDown(callback: Callable[['TimePicker', bool], None], /) -> None:
+        """TouchDown()"""
+        raise NotImplementedError
+
     def on_TouchUp(self, callback: Callable[[], None], /) -> None:
+        """TouchUp()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_TouchUp(callback: Callable[['TimePicker', bool], None], /) -> None:
         """TouchUp()"""
         raise NotImplementedError
 
@@ -2116,7 +2351,17 @@ class WebViewer(Component):
         """BeforePageLoad(url)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_BeforePageLoad(callback: Callable[['WebViewer', bool, str], None], /) -> None:
+        """BeforePageLoad(url)"""
+        raise NotImplementedError
+
     def on_ErrorOccurred(self, callback: Callable[[int, str, str], None], /) -> None:
+        """ErrorOccurred(errorCode, description, failingUrl)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_ErrorOccurred(callback: Callable[['WebViewer', bool, int, str, str], None], /) -> None:
         """ErrorOccurred(errorCode, description, failingUrl)"""
         raise NotImplementedError
 
@@ -2124,7 +2369,17 @@ class WebViewer(Component):
         """PageLoaded(url)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_PageLoaded(callback: Callable[['WebViewer', bool, str], None], /) -> None:
+        """PageLoaded(url)"""
+        raise NotImplementedError
+
     def on_WebViewStringChange(self, callback: Callable[[str], None], /) -> None:
+        """WebViewStringChange(value)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_WebViewStringChange(callback: Callable[['WebViewer', bool, str], None], /) -> None:
         """WebViewStringChange(value)"""
         raise NotImplementedError
 
@@ -2499,6 +2754,11 @@ class Camcorder(Component):
         """AfterRecording(clip)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_AfterRecording(callback: Callable[['Camcorder', bool, str], None], /) -> None:
+        """AfterRecording(clip)"""
+        raise NotImplementedError
+
 class Camera(Component):
     __data__ = {'desc': 'Use a camera component to take a picture on the phone.', 'properties': [], 'events': [{'name': 'AfterPicture', 'args': [{'name': 'image', 'type': 'str'}], 'desc': 'Called after the picture is taken. The text argument image is the path that can be used to\n locate the image on the phone.'}], 'methods': [{'name': 'TakePicture', 'args': [], 'returns': None, 'desc': 'Takes a picture, then raises the AfterPicture event.'}]}
 
@@ -2509,6 +2769,11 @@ class Camera(Component):
         raise NotImplementedError
 
     def on_AfterPicture(self, callback: Callable[[str], None], /) -> None:
+        """AfterPicture(image)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_AfterPicture(callback: Callable[['Camera', bool, str], None], /) -> None:
         """AfterPicture(image)"""
         raise NotImplementedError
 
@@ -2641,7 +2906,17 @@ class ImagePicker(Component):
         """AfterPicking()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_AfterPicking(callback: Callable[['ImagePicker', bool], None], /) -> None:
+        """AfterPicking()"""
+        raise NotImplementedError
+
     def on_BeforePicking(self, callback: Callable[[], None], /) -> None:
+        """BeforePicking()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_BeforePicking(callback: Callable[['ImagePicker', bool], None], /) -> None:
         """BeforePicking()"""
         raise NotImplementedError
 
@@ -2649,7 +2924,17 @@ class ImagePicker(Component):
         """GotFocus()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_GotFocus(callback: Callable[['ImagePicker', bool], None], /) -> None:
+        """GotFocus()"""
+        raise NotImplementedError
+
     def on_LostFocus(self, callback: Callable[[], None], /) -> None:
+        """LostFocus()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_LostFocus(callback: Callable[['ImagePicker', bool], None], /) -> None:
         """LostFocus()"""
         raise NotImplementedError
 
@@ -2657,7 +2942,17 @@ class ImagePicker(Component):
         """TouchDown()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_TouchDown(callback: Callable[['ImagePicker', bool], None], /) -> None:
+        """TouchDown()"""
+        raise NotImplementedError
+
     def on_TouchUp(self, callback: Callable[[], None], /) -> None:
+        """TouchUp()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_TouchUp(callback: Callable[['ImagePicker', bool], None], /) -> None:
         """TouchUp()"""
         raise NotImplementedError
 
@@ -2719,7 +3014,17 @@ class Player(Component):
         """Completed()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_Completed(callback: Callable[['Player', bool], None], /) -> None:
+        """Completed()"""
+        raise NotImplementedError
+
     def on_OtherPlayerStarted(self, callback: Callable[[], None], /) -> None:
+        """OtherPlayerStarted()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_OtherPlayerStarted(callback: Callable[['Player', bool], None], /) -> None:
         """OtherPlayerStarted()"""
         raise NotImplementedError
 
@@ -2784,11 +3089,26 @@ class SoundRecorder(Component):
         """AfterSoundRecorded(sound)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_AfterSoundRecorded(callback: Callable[['SoundRecorder', bool, str], None], /) -> None:
+        """AfterSoundRecorded(sound)"""
+        raise NotImplementedError
+
     def on_StartedRecording(self, callback: Callable[[], None], /) -> None:
         """StartedRecording()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_StartedRecording(callback: Callable[['SoundRecorder', bool], None], /) -> None:
+        """StartedRecording()"""
+        raise NotImplementedError
+
     def on_StoppedRecording(self, callback: Callable[[], None], /) -> None:
+        """StoppedRecording()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_StoppedRecording(callback: Callable[['SoundRecorder', bool], None], /) -> None:
         """StoppedRecording()"""
         raise NotImplementedError
 
@@ -2828,7 +3148,17 @@ class SpeechRecognizer(Component):
         """AfterGettingText(result, partial)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_AfterGettingText(callback: Callable[['SpeechRecognizer', bool, str, bool], None], /) -> None:
+        """AfterGettingText(result, partial)"""
+        raise NotImplementedError
+
     def on_BeforeGettingText(self, callback: Callable[[], None], /) -> None:
+        """BeforeGettingText()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_BeforeGettingText(callback: Callable[['SpeechRecognizer', bool], None], /) -> None:
         """BeforeGettingText()"""
         raise NotImplementedError
 
@@ -2889,7 +3219,17 @@ class TextToSpeech(Component):
         """AfterSpeaking(result)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_AfterSpeaking(callback: Callable[['TextToSpeech', bool, bool], None], /) -> None:
+        """AfterSpeaking(result)"""
+        raise NotImplementedError
+
     def on_BeforeSpeaking(self, callback: Callable[[], None], /) -> None:
+        """BeforeSpeaking()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_BeforeSpeaking(callback: Callable[['TextToSpeech', bool], None], /) -> None:
         """BeforeSpeaking()"""
         raise NotImplementedError
 
@@ -2911,6 +3251,11 @@ class Translator(Component):
         raise NotImplementedError
 
     def on_GotTranslation(self, callback: Callable[[str, str], None], /) -> None:
+        """GotTranslation(responseCode, translation)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_GotTranslation(callback: Callable[['Translator', bool, str, str], None], /) -> None:
         """GotTranslation(responseCode, translation)"""
         raise NotImplementedError
 
@@ -3000,6 +3345,11 @@ class VideoPlayer(Component):
         raise NotImplementedError
 
     def on_Completed(self, callback: Callable[[], None], /) -> None:
+        """Completed()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_Completed(callback: Callable[['VideoPlayer', bool], None], /) -> None:
         """Completed()"""
         raise NotImplementedError
 
@@ -3114,7 +3464,17 @@ class Ball(Component):
         """CollidedWith(other)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_CollidedWith(callback: Callable[['Ball', bool, Component], None], /) -> None:
+        """CollidedWith(other)"""
+        raise NotImplementedError
+
     def on_Dragged(self, callback: Callable[[int, int, int, int, int, int], None], /) -> None:
+        """Dragged(startX, startY, prevX, prevY, currentX, currentY)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_Dragged(callback: Callable[['Ball', bool, int, int, int, int, int, int], None], /) -> None:
         """Dragged(startX, startY, prevX, prevY, currentX, currentY)"""
         raise NotImplementedError
 
@@ -3122,7 +3482,17 @@ class Ball(Component):
         """EdgeReached(edge)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_EdgeReached(callback: Callable[['Ball', bool, int], None], /) -> None:
+        """EdgeReached(edge)"""
+        raise NotImplementedError
+
     def on_Flung(self, callback: Callable[[int, int, int, int, int, int], None], /) -> None:
+        """Flung(x, y, speed, heading, xvel, yvel)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_Flung(callback: Callable[['Ball', bool, int, int, int, int, int, int], None], /) -> None:
         """Flung(x, y, speed, heading, xvel, yvel)"""
         raise NotImplementedError
 
@@ -3130,7 +3500,17 @@ class Ball(Component):
         """NoLongerCollidingWith(other)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_NoLongerCollidingWith(callback: Callable[['Ball', bool, Component], None], /) -> None:
+        """NoLongerCollidingWith(other)"""
+        raise NotImplementedError
+
     def on_TouchDown(self, callback: Callable[[int, int], None], /) -> None:
+        """TouchDown(x, y)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_TouchDown(callback: Callable[['Ball', bool, int, int], None], /) -> None:
         """TouchDown(x, y)"""
         raise NotImplementedError
 
@@ -3138,7 +3518,17 @@ class Ball(Component):
         """TouchUp(x, y)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_TouchUp(callback: Callable[['Ball', bool, int, int], None], /) -> None:
+        """TouchUp(x, y)"""
+        raise NotImplementedError
+
     def on_Touched(self, callback: Callable[[int, int], None], /) -> None:
+        """Touched(x, y)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_Touched(callback: Callable[['Ball', bool, int, int], None], /) -> None:
         """Touched(x, y)"""
         raise NotImplementedError
 
@@ -3303,7 +3693,17 @@ class Canvas(Component):
         """Dragged(startX, startY, prevX, prevY, currentX, currentY, draggedAnySprite)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_Dragged(callback: Callable[['Canvas', bool, int, int, int, int, int, int, bool], None], /) -> None:
+        """Dragged(startX, startY, prevX, prevY, currentX, currentY, draggedAnySprite)"""
+        raise NotImplementedError
+
     def on_Flung(self, callback: Callable[[int, int, int, int, int, int, bool], None], /) -> None:
+        """Flung(x, y, speed, heading, xvel, yvel, flungSprite)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_Flung(callback: Callable[['Canvas', bool, int, int, int, int, int, int, bool], None], /) -> None:
         """Flung(x, y, speed, heading, xvel, yvel, flungSprite)"""
         raise NotImplementedError
 
@@ -3311,11 +3711,26 @@ class Canvas(Component):
         """TouchDown(x, y)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_TouchDown(callback: Callable[['Canvas', bool, int, int], None], /) -> None:
+        """TouchDown(x, y)"""
+        raise NotImplementedError
+
     def on_TouchUp(self, callback: Callable[[int, int], None], /) -> None:
         """TouchUp(x, y)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_TouchUp(callback: Callable[['Canvas', bool, int, int], None], /) -> None:
+        """TouchUp(x, y)"""
+        raise NotImplementedError
+
     def on_Touched(self, callback: Callable[[int, int, bool], None], /) -> None:
+        """Touched(x, y, touchedAnySprite)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_Touched(callback: Callable[['Canvas', bool, int, int, bool], None], /) -> None:
         """Touched(x, y, touchedAnySprite)"""
         raise NotImplementedError
 
@@ -3446,7 +3861,17 @@ class ImageSprite(Component):
         """CollidedWith(other)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_CollidedWith(callback: Callable[['ImageSprite', bool, Component], None], /) -> None:
+        """CollidedWith(other)"""
+        raise NotImplementedError
+
     def on_Dragged(self, callback: Callable[[int, int, int, int, int, int], None], /) -> None:
+        """Dragged(startX, startY, prevX, prevY, currentX, currentY)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_Dragged(callback: Callable[['ImageSprite', bool, int, int, int, int, int, int], None], /) -> None:
         """Dragged(startX, startY, prevX, prevY, currentX, currentY)"""
         raise NotImplementedError
 
@@ -3454,7 +3879,17 @@ class ImageSprite(Component):
         """EdgeReached(edge)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_EdgeReached(callback: Callable[['ImageSprite', bool, int], None], /) -> None:
+        """EdgeReached(edge)"""
+        raise NotImplementedError
+
     def on_Flung(self, callback: Callable[[int, int, int, int, int, int], None], /) -> None:
+        """Flung(x, y, speed, heading, xvel, yvel)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_Flung(callback: Callable[['ImageSprite', bool, int, int, int, int, int, int], None], /) -> None:
         """Flung(x, y, speed, heading, xvel, yvel)"""
         raise NotImplementedError
 
@@ -3462,7 +3897,17 @@ class ImageSprite(Component):
         """NoLongerCollidingWith(other)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_NoLongerCollidingWith(callback: Callable[['ImageSprite', bool, Component], None], /) -> None:
+        """NoLongerCollidingWith(other)"""
+        raise NotImplementedError
+
     def on_TouchDown(self, callback: Callable[[int, int], None], /) -> None:
+        """TouchDown(x, y)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_TouchDown(callback: Callable[['ImageSprite', bool, int, int], None], /) -> None:
         """TouchDown(x, y)"""
         raise NotImplementedError
 
@@ -3470,7 +3915,17 @@ class ImageSprite(Component):
         """TouchUp(x, y)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_TouchUp(callback: Callable[['ImageSprite', bool, int, int], None], /) -> None:
+        """TouchUp(x, y)"""
+        raise NotImplementedError
+
     def on_Touched(self, callback: Callable[[int, int], None], /) -> None:
+        """Touched(x, y)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_Touched(callback: Callable[['ImageSprite', bool, int, int], None], /) -> None:
         """Touched(x, y)"""
         raise NotImplementedError
 
@@ -3524,7 +3979,17 @@ class AccelerometerSensor(Component):
         """AccelerationChanged(xAccel, yAccel, zAccel)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_AccelerationChanged(callback: Callable[['AccelerometerSensor', bool, int, int, int], None], /) -> None:
+        """AccelerationChanged(xAccel, yAccel, zAccel)"""
+        raise NotImplementedError
+
     def on_Shaking(self, callback: Callable[[], None], /) -> None:
+        """Shaking()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_Shaking(callback: Callable[['AccelerometerSensor', bool], None], /) -> None:
         """Shaking()"""
         raise NotImplementedError
 
@@ -3550,6 +4015,11 @@ class BarcodeScanner(Component):
         raise NotImplementedError
 
     def on_AfterScan(self, callback: Callable[[str], None], /) -> None:
+        """AfterScan(result)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_AfterScan(callback: Callable[['BarcodeScanner', bool, str], None], /) -> None:
         """AfterScan(result)"""
         raise NotImplementedError
 
@@ -3584,6 +4054,11 @@ class Barometer(Component):
         raise NotImplementedError
 
     def on_AirPressureChanged(self, callback: Callable[[int], None], /) -> None:
+        """AirPressureChanged(pressure)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_AirPressureChanged(callback: Callable[['Barometer', bool, int], None], /) -> None:
         """AirPressureChanged(pressure)"""
         raise NotImplementedError
 
@@ -3723,6 +4198,11 @@ class Clock(Component):
         """Timer()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_Timer(callback: Callable[['Clock', bool], None], /) -> None:
+        """Timer()"""
+        raise NotImplementedError
+
 class GyroscopeSensor(Component):
     __data__ = {'desc': 'Component providing data from the deviceâ\x80\x99s gyroscope sensor.', 'properties': [{'name': 'Available', 'type': 'bool', 'ro': True, 'do': False, 'bo': True, 'desc': 'Indicates whether a gyroscope sensor is available.'}, {'name': 'Enabled', 'type': 'bool', 'ro': False, 'do': False, 'bo': False, 'desc': 'Enabled property getter method.'}, {'name': 'XAngularVelocity', 'type': 'int', 'ro': True, 'do': False, 'bo': True, 'desc': 'The angular velocity around the X axis, in degrees per second.'}, {'name': 'YAngularVelocity', 'type': 'int', 'ro': True, 'do': False, 'bo': True, 'desc': 'The angular velocity around the Y axis, in degrees per second.'}, {'name': 'ZAngularVelocity', 'type': 'int', 'ro': True, 'do': False, 'bo': True, 'desc': 'The angular velocity around the Z axis, in degrees per second.'}], 'events': [{'name': 'GyroscopeChanged', 'args': [{'name': 'xAngularVelocity', 'type': 'int'}, {'name': 'yAngularVelocity', 'type': 'int'}, {'name': 'zAngularVelocity', 'type': 'int'}, {'name': 'timestamp', 'type': 'int'}], 'desc': 'Indicates that the gyroscope sensor data has changed. The timestamp parameter is the time in nanoseconds at which the event occurred.'}], 'methods': []}
 
@@ -3757,6 +4237,11 @@ class GyroscopeSensor(Component):
         """GyroscopeChanged(xAngularVelocity, yAngularVelocity, zAngularVelocity, timestamp)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_GyroscopeChanged(callback: Callable[['GyroscopeSensor', bool, int, int, int, int], None], /) -> None:
+        """GyroscopeChanged(xAngularVelocity, yAngularVelocity, zAngularVelocity, timestamp)"""
+        raise NotImplementedError
+
 class Hygrometer(Component):
     __data__ = {'desc': 'Physical world component that can measure the relative ambient air \n humidity if supported by the hardware.', 'properties': [{'name': 'Available', 'type': 'bool', 'ro': True, 'do': False, 'bo': True, 'desc': 'Specifies whether or not the device has the hardware to support the Hygrometer component.'}, {'name': 'Enabled', 'type': 'bool', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies whether the sensor should generate events.  If true,\n the sensor will generate events.  Otherwise, no events are\n generated.'}, {'name': 'Humidity', 'type': 'int', 'ro': True, 'do': False, 'bo': True, 'desc': 'Returns the relative ambient humidity as a percentage.\n The sensor must be enabled and available \n to return meaningful values.'}, {'name': 'RefreshTime', 'type': 'int', 'ro': False, 'do': False, 'bo': False, 'desc': 'The requested minimum time in milliseconds between changes in readings being reported. Android is not guaranteed to honor the request. Setting this property has no effect on pre-Gingerbread devices.'}], 'events': [{'name': 'HumidityChanged', 'args': [{'name': 'humidity', 'type': 'int'}], 'desc': 'Indicates the relative humidity changed.'}], 'methods': []}
 
@@ -3788,6 +4273,11 @@ class Hygrometer(Component):
         raise NotImplementedError
 
     def on_HumidityChanged(self, callback: Callable[[int], None], /) -> None:
+        """HumidityChanged(humidity)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_HumidityChanged(callback: Callable[['Hygrometer', bool, int], None], /) -> None:
         """HumidityChanged(humidity)"""
         raise NotImplementedError
 
@@ -3826,6 +4316,11 @@ class LightSensor(Component):
         raise NotImplementedError
 
     def on_LightChanged(self, callback: Callable[[int], None], /) -> None:
+        """LightChanged(lux)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_LightChanged(callback: Callable[['LightSensor', bool, int], None], /) -> None:
         """LightChanged(lux)"""
         raise NotImplementedError
 
@@ -3921,7 +4416,17 @@ class LocationSensor(Component):
         """LocationChanged(latitude, longitude, altitude, speed)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_LocationChanged(callback: Callable[['LocationSensor', bool, int, int, int, int], None], /) -> None:
+        """LocationChanged(latitude, longitude, altitude, speed)"""
+        raise NotImplementedError
+
     def on_StatusChanged(self, callback: Callable[[str, str], None], /) -> None:
+        """StatusChanged(provider, status)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_StatusChanged(callback: Callable[['LocationSensor', bool, str, str], None], /) -> None:
         """StatusChanged(provider, status)"""
         raise NotImplementedError
 
@@ -3967,6 +4472,11 @@ class MagneticFieldSensor(Component):
         """MagneticChanged(xStrength, yStrength, zStrength, absoluteStrength)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_MagneticChanged(callback: Callable[['MagneticFieldSensor', bool, int, int, int, int], None], /) -> None:
+        """MagneticChanged(xStrength, yStrength, zStrength, absoluteStrength)"""
+        raise NotImplementedError
+
 class NearField(Component):
     __data__ = {'desc': 'Non-visible component to provide NFC capabilities. For now this component supports the reading\n and writing of text tags only (if supported by the device).', 'properties': [{'name': 'LastMessage', 'type': 'str', 'ro': True, 'do': False, 'bo': True, 'desc': 'Returns the content of the most recently received tag.'}, {'name': 'ReadMode', 'type': 'bool', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies whether the NFC hardware should operate in read mode (true) or\n write mode (false).'}, {'name': 'TextToWrite', 'type': 'str', 'ro': False, 'do': False, 'bo': True, 'desc': 'Specifies the content that will be written to the tag when in write mode. This method has no\n effect if ReadMode is true.'}, {'name': 'WriteType', 'type': 'int', 'ro': True, 'do': False, 'bo': True, 'desc': 'Returns the write type for the NFC component. For this version of the component, it is always\n 1.'}], 'events': [{'name': 'TagRead', 'args': [{'name': 'message', 'type': 'str'}], 'desc': 'Indicates that a new tag has been detected.\n Currently this is only a plain text tag, as specified in the\n manifest.'}, {'name': 'TagWritten', 'args': [], 'desc': 'Indicates that a tag has come into range of the NFC sensor and has been written.'}], 'methods': []}
 
@@ -4001,7 +4511,17 @@ class NearField(Component):
         """TagRead(message)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_TagRead(callback: Callable[['NearField', bool, str], None], /) -> None:
+        """TagRead(message)"""
+        raise NotImplementedError
+
     def on_TagWritten(self, callback: Callable[[], None], /) -> None:
+        """TagWritten()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_TagWritten(callback: Callable[['NearField', bool], None], /) -> None:
         """TagWritten()"""
         raise NotImplementedError
 
@@ -4044,6 +4564,11 @@ class OrientationSensor(Component):
         raise NotImplementedError
 
     def on_OrientationChanged(self, callback: Callable[[int, int, int], None], /) -> None:
+        """OrientationChanged(azimuth, pitch, roll)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_OrientationChanged(callback: Callable[['OrientationSensor', bool, int, int, int], None], /) -> None:
         """OrientationChanged(azimuth, pitch, roll)"""
         raise NotImplementedError
 
@@ -4101,7 +4626,17 @@ class Pedometer(Component):
         """SimpleStep(simpleSteps, distance)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_SimpleStep(callback: Callable[['Pedometer', bool, int, int], None], /) -> None:
+        """SimpleStep(simpleSteps, distance)"""
+        raise NotImplementedError
+
     def on_WalkStep(self, callback: Callable[[int, int], None], /) -> None:
+        """WalkStep(walkSteps, distance)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_WalkStep(callback: Callable[['Pedometer', bool, int, int], None], /) -> None:
         """WalkStep(walkSteps, distance)"""
         raise NotImplementedError
 
@@ -4143,6 +4678,11 @@ class ProximitySensor(Component):
         """ProximityChanged(distance)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_ProximityChanged(callback: Callable[['ProximitySensor', bool, int], None], /) -> None:
+        """ProximityChanged(distance)"""
+        raise NotImplementedError
+
 class Thermometer(Component):
     __data__ = {'desc': 'Physical world component that can measure the ambient air temperature if\n supported by the hardware.', 'properties': [{'name': 'Available', 'type': 'bool', 'ro': True, 'do': False, 'bo': True, 'desc': 'Specifies whether or not the device has the hardware to support the Thermometer component.'}, {'name': 'Enabled', 'type': 'bool', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies whether the sensor should generate events.  If true,\n the sensor will generate events.  Otherwise, no events are\n generated.'}, {'name': 'RefreshTime', 'type': 'int', 'ro': False, 'do': False, 'bo': False, 'desc': 'The requested minimum time in milliseconds between changes in readings being reported. Android is not guaranteed to honor the request. Setting this property has no effect on pre-Gingerbread devices.'}, {'name': 'Temperature', 'type': 'int', 'ro': True, 'do': False, 'bo': True, 'desc': 'Returns the temperature in degrees Celsius.\n The sensor must be enabled and available \n to return meaningful values.'}], 'events': [{'name': 'TemperatureChanged', 'args': [{'name': 'temperature', 'type': 'int'}], 'desc': 'Indicates a change of temperature, provided in degrees Celsius.'}], 'methods': []}
 
@@ -4174,6 +4714,11 @@ class Thermometer(Component):
         raise NotImplementedError
 
     def on_TemperatureChanged(self, callback: Callable[[int], None], /) -> None:
+        """TemperatureChanged(temperature)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_TemperatureChanged(callback: Callable[['Thermometer', bool, int], None], /) -> None:
         """TemperatureChanged(temperature)"""
         raise NotImplementedError
 
@@ -4220,7 +4765,17 @@ class CloudDB(Component):
         """CloudDBError(message)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_CloudDBError(callback: Callable[['CloudDB', bool, str], None], /) -> None:
+        """CloudDBError(message)"""
+        raise NotImplementedError
+
     def on_DataChanged(self, callback: Callable[[str, Any], None], /) -> None:
+        """DataChanged(tag, value)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_DataChanged(callback: Callable[['CloudDB', bool, str, Any], None], /) -> None:
         """DataChanged(tag, value)"""
         raise NotImplementedError
 
@@ -4228,7 +4783,17 @@ class CloudDB(Component):
         """FirstRemoved(value)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_FirstRemoved(callback: Callable[['CloudDB', bool, Any], None], /) -> None:
+        """FirstRemoved(value)"""
+        raise NotImplementedError
+
     def on_GotValue(self, callback: Callable[[str, Any], None], /) -> None:
+        """GotValue(tag, value)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_GotValue(callback: Callable[['CloudDB', bool, str, Any], None], /) -> None:
         """GotValue(tag, value)"""
         raise NotImplementedError
 
@@ -4236,7 +4801,17 @@ class CloudDB(Component):
         """TagList(value)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_TagList(callback: Callable[['CloudDB', bool, list], None], /) -> None:
+        """TagList(value)"""
+        raise NotImplementedError
+
     def on_UpdateDone(self, callback: Callable[[str, str], None], /) -> None:
+        """UpdateDone(tag, operation)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_UpdateDone(callback: Callable[['CloudDB', bool, str, str], None], /) -> None:
         """UpdateDone(tag, operation)"""
         raise NotImplementedError
 
@@ -4315,7 +4890,17 @@ class File(Component):
         """AfterFileSaved(fileName)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_AfterFileSaved(callback: Callable[['File', bool, str], None], /) -> None:
+        """AfterFileSaved(fileName)"""
+        raise NotImplementedError
+
     def on_GotText(self, callback: Callable[[str], None], /) -> None:
+        """GotText(text)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_GotText(callback: Callable[['File', bool, str], None], /) -> None:
         """GotText(text)"""
         raise NotImplementedError
 
@@ -4399,7 +4984,17 @@ class Spreadsheet(Component):
         """ErrorOccurred(errorMessage)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_ErrorOccurred(callback: Callable[['Spreadsheet', bool, str], None], /) -> None:
+        """ErrorOccurred(errorMessage)"""
+        raise NotImplementedError
+
     def on_FinishedAddColumn(self, callback: Callable[[int], None], /) -> None:
+        """FinishedAddColumn(columnNumber)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_FinishedAddColumn(callback: Callable[['Spreadsheet', bool, int], None], /) -> None:
         """FinishedAddColumn(columnNumber)"""
         raise NotImplementedError
 
@@ -4407,7 +5002,17 @@ class Spreadsheet(Component):
         """FinishedAddRow(rowNumber)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_FinishedAddRow(callback: Callable[['Spreadsheet', bool, int], None], /) -> None:
+        """FinishedAddRow(rowNumber)"""
+        raise NotImplementedError
+
     def on_FinishedClearRange(self, callback: Callable[[], None], /) -> None:
+        """FinishedClearRange()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_FinishedClearRange(callback: Callable[['Spreadsheet', bool], None], /) -> None:
         """FinishedClearRange()"""
         raise NotImplementedError
 
@@ -4415,7 +5020,17 @@ class Spreadsheet(Component):
         """FinishedRemoveColumn()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_FinishedRemoveColumn(callback: Callable[['Spreadsheet', bool], None], /) -> None:
+        """FinishedRemoveColumn()"""
+        raise NotImplementedError
+
     def on_FinishedRemoveRow(self, callback: Callable[[], None], /) -> None:
+        """FinishedRemoveRow()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_FinishedRemoveRow(callback: Callable[['Spreadsheet', bool], None], /) -> None:
         """FinishedRemoveRow()"""
         raise NotImplementedError
 
@@ -4423,7 +5038,17 @@ class Spreadsheet(Component):
         """FinishedWriteCell()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_FinishedWriteCell(callback: Callable[['Spreadsheet', bool], None], /) -> None:
+        """FinishedWriteCell()"""
+        raise NotImplementedError
+
     def on_FinishedWriteColumn(self, callback: Callable[[], None], /) -> None:
+        """FinishedWriteColumn()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_FinishedWriteColumn(callback: Callable[['Spreadsheet', bool], None], /) -> None:
         """FinishedWriteColumn()"""
         raise NotImplementedError
 
@@ -4431,7 +5056,17 @@ class Spreadsheet(Component):
         """FinishedWriteRange()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_FinishedWriteRange(callback: Callable[['Spreadsheet', bool], None], /) -> None:
+        """FinishedWriteRange()"""
+        raise NotImplementedError
+
     def on_FinishedWriteRow(self, callback: Callable[[], None], /) -> None:
+        """FinishedWriteRow()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_FinishedWriteRow(callback: Callable[['Spreadsheet', bool], None], /) -> None:
         """FinishedWriteRow()"""
         raise NotImplementedError
 
@@ -4439,7 +5074,17 @@ class Spreadsheet(Component):
         """GotCellData(cellData)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_GotCellData(callback: Callable[['Spreadsheet', bool, str], None], /) -> None:
+        """GotCellData(cellData)"""
+        raise NotImplementedError
+
     def on_GotColumnData(self, callback: Callable[[list], None], /) -> None:
+        """GotColumnData(columnData)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_GotColumnData(callback: Callable[['Spreadsheet', bool, list], None], /) -> None:
         """GotColumnData(columnData)"""
         raise NotImplementedError
 
@@ -4447,11 +5092,26 @@ class Spreadsheet(Component):
         """GotRangeData(rangeData)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_GotRangeData(callback: Callable[['Spreadsheet', bool, list], None], /) -> None:
+        """GotRangeData(rangeData)"""
+        raise NotImplementedError
+
     def on_GotRowData(self, callback: Callable[[list], None], /) -> None:
         """GotRowData(rowDataList)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_GotRowData(callback: Callable[['Spreadsheet', bool, list], None], /) -> None:
+        """GotRowData(rowDataList)"""
+        raise NotImplementedError
+
     def on_GotSheetData(self, callback: Callable[[list], None], /) -> None:
+        """GotSheetData(sheetData)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_GotSheetData(callback: Callable[['Spreadsheet', bool, list], None], /) -> None:
         """GotSheetData(sheetData)"""
         raise NotImplementedError
 
@@ -4508,11 +5168,26 @@ class TinyWebDB(Component):
         """GotValue(tagFromWebDB, valueFromWebDB)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_GotValue(callback: Callable[['TinyWebDB', bool, str, Any], None], /) -> None:
+        """GotValue(tagFromWebDB, valueFromWebDB)"""
+        raise NotImplementedError
+
     def on_ValueStored(self, callback: Callable[[], None], /) -> None:
         """ValueStored()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_ValueStored(callback: Callable[['TinyWebDB', bool], None], /) -> None:
+        """ValueStored()"""
+        raise NotImplementedError
+
     def on_WebServiceError(self, callback: Callable[[str], None], /) -> None:
+        """WebServiceError(message)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_WebServiceError(callback: Callable[['TinyWebDB', bool, str], None], /) -> None:
         """WebServiceError(message)"""
         raise NotImplementedError
 
@@ -4616,7 +5291,17 @@ class ActivityStarter(Component):
         """ActivityCanceled()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_ActivityCanceled(callback: Callable[['ActivityStarter', bool], None], /) -> None:
+        """ActivityCanceled()"""
+        raise NotImplementedError
+
     def on_AfterActivity(self, callback: Callable[[str], None], /) -> None:
+        """AfterActivity(result)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_AfterActivity(callback: Callable[['ActivityStarter', bool, str], None], /) -> None:
         """AfterActivity(result)"""
         raise NotImplementedError
 
@@ -4862,6 +5547,11 @@ class BluetoothServer(Component):
         """ConnectionAccepted()"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_ConnectionAccepted(callback: Callable[['BluetoothServer', bool], None], /) -> None:
+        """ConnectionAccepted()"""
+        raise NotImplementedError
+
 class Serial(Component):
     __data__ = {'desc': 'Component for Serial', 'properties': [{'name': 'BaudRate', 'type': 'int', 'ro': False, 'do': False, 'bo': False, 'desc': 'Returns the current baud rate'}, {'name': 'BufferSize', 'type': 'int', 'ro': False, 'do': False, 'bo': False, 'desc': 'Returns the buffer size in bytes'}, {'name': 'IsInitialized', 'type': 'bool', 'ro': True, 'do': False, 'bo': True, 'desc': 'Returns true when the Serial has been initialized.'}, {'name': 'IsOpen', 'type': 'bool', 'ro': True, 'do': False, 'bo': True, 'desc': 'Returns true when the Serial connection is open.'}], 'events': [], 'methods': [{'name': 'CloseSerial', 'args': [], 'returns': 'bool', 'desc': 'Closes serial connection. Returns true when closed.'}, {'name': 'InitializeSerial', 'args': [], 'returns': None, 'desc': 'Initializes serial connection.'}, {'name': 'OpenSerial', 'args': [], 'returns': 'bool', 'desc': 'Opens serial connection. Returns true when opened.'}, {'name': 'PrintSerial', 'args': [{'name': 'data', 'type': 'str'}], 'returns': None, 'desc': 'Writes given data to serial, and appends a new line at the end.'}, {'name': 'ReadSerial', 'args': [], 'returns': 'str', 'desc': 'Reads data from serial.'}, {'name': 'WriteSerial', 'args': [{'name': 'data', 'type': 'str'}], 'returns': None, 'desc': 'Writes given data to serial.'}]}
 
@@ -5031,11 +5721,26 @@ class Web(Component):
         """GotFile(url, responseCode, responseType, fileName)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_GotFile(callback: Callable[['Web', bool, str, int, str, str], None], /) -> None:
+        """GotFile(url, responseCode, responseType, fileName)"""
+        raise NotImplementedError
+
     def on_GotText(self, callback: Callable[[str, int, str, str], None], /) -> None:
         """GotText(url, responseCode, responseType, responseContent)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_GotText(callback: Callable[['Web', bool, str, int, str, str], None], /) -> None:
+        """GotText(url, responseCode, responseType, responseContent)"""
+        raise NotImplementedError
+
     def on_TimedOut(self, callback: Callable[[str], None], /) -> None:
+        """TimedOut(url)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_TimedOut(callback: Callable[['Web', bool, str], None], /) -> None:
         """TimedOut(url)"""
         raise NotImplementedError
 
@@ -5095,7 +5800,17 @@ class ChatBot(Component):
         """ErrorOccurred(responseCode, responseText)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_ErrorOccurred(callback: Callable[['ChatBot', bool, int, str], None], /) -> None:
+        """ErrorOccurred(responseCode, responseText)"""
+        raise NotImplementedError
+
     def on_GotResponse(self, callback: Callable[[str], None], /) -> None:
+        """GotResponse(responseText)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_GotResponse(callback: Callable[['ChatBot', bool, str], None], /) -> None:
         """GotResponse(responseText)"""
         raise NotImplementedError
 
@@ -5138,7 +5853,17 @@ class FirebaseDB(Component):
         """DataChanged(tag, value)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_DataChanged(callback: Callable[['FirebaseDB', bool, str, Any], None], /) -> None:
+        """DataChanged(tag, value)"""
+        raise NotImplementedError
+
     def on_FirebaseError(self, callback: Callable[[str], None], /) -> None:
+        """FirebaseError(message)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_FirebaseError(callback: Callable[['FirebaseDB', bool, str], None], /) -> None:
         """FirebaseError(message)"""
         raise NotImplementedError
 
@@ -5146,11 +5871,26 @@ class FirebaseDB(Component):
         """FirstRemoved(value)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_FirstRemoved(callback: Callable[['FirebaseDB', bool, Any], None], /) -> None:
+        """FirstRemoved(value)"""
+        raise NotImplementedError
+
     def on_GotValue(self, callback: Callable[[str, Any], None], /) -> None:
         """GotValue(tag, value)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_GotValue(callback: Callable[['FirebaseDB', bool, str, Any], None], /) -> None:
+        """GotValue(tag, value)"""
+        raise NotImplementedError
+
     def on_TagList(self, callback: Callable[[list], None], /) -> None:
+        """TagList(value)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_TagList(callback: Callable[['FirebaseDB', bool, list], None], /) -> None:
         """TagList(value)"""
         raise NotImplementedError
 
@@ -5205,10 +5945,25 @@ class ImageBot(Component):
         """ErrorOccurred(responseCode, responseText)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_ErrorOccurred(callback: Callable[['ImageBot', bool, int, str], None], /) -> None:
+        """ErrorOccurred(responseCode, responseText)"""
+        raise NotImplementedError
+
     def on_ImageCreated(self, callback: Callable[[str], None], /) -> None:
         """ImageCreated(fileName)"""
         raise NotImplementedError
 
+    @staticmethod
+    def on_any_ImageCreated(callback: Callable[['ImageBot', bool, str], None], /) -> None:
+        """ImageCreated(fileName)"""
+        raise NotImplementedError
+
     def on_ImageEdited(self, callback: Callable[[str], None], /) -> None:
+        """ImageEdited(fileName)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_ImageEdited(callback: Callable[['ImageBot', bool, str], None], /) -> None:
         """ImageEdited(fileName)"""
         raise NotImplementedError

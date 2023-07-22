@@ -93,6 +93,7 @@ class PythonCompiler(ast.NodeVisitor):
         self._globals: List[Set[str]] = []
         self._locals: Set[str] = set()
         self._ctx: dict = {}
+        self._global_assigns: Dict[str, Block] = {}
 
     @property
     def _global(self):
@@ -120,6 +121,8 @@ class PythonCompiler(ast.NodeVisitor):
             first = blocks[0]
             cur = first
             for blk in blocks[1:]:
+                while cur.next is not None:
+                    cur = cur.next
                 cur.next = blk
                 cur = blk
             return first
@@ -128,12 +131,15 @@ class PythonCompiler(ast.NodeVisitor):
         raise NotSupportedError(f'{node.__class__.__name__} is not implemented')
         return super().generic_visit(node)
 
-    def _get_var_block(self, name: str, force_global: Optional[bool] = None):
+    def _get_var_block(
+        self, name: str, force_global: Optional[bool] = None, eventparam: bool = False
+    ):
         if force_global is None:
             force_global = self._global and name not in self._locals
         return Block(
             'lexical_variable_get',
             fields={'VAR': ('global ' if force_global else '') + name},
+            mutation_eventparams=[name] if eventparam else None,
         )
 
     def _set_var_block(self, name: str, value: Block):
@@ -171,6 +177,9 @@ class PythonCompiler(ast.NodeVisitor):
 
     def compile(self, root: ast.Module):
         self._ctx = {}
+        self._procs = {}
+        self._locals = set()
+        self._global_assigns = {}
         self.project = BlocklyProject()
         self.visit(root)
         with open(LIB) as f:
@@ -286,6 +295,11 @@ class PythonCompiler(ast.NodeVisitor):
                 values={'ARG0': Block('text', fields={'TEXT': 'null'})},
             ),
         )
+        cur = blk
+        for name, var_blk in self._global_assigns.items():
+            cur.next = self._set_var_block(name, var_blk)
+            while cur.next is not None:
+                cur = cur.next
         for decl in self.project:
             if (
                 decl.type == 'component_event'
@@ -293,7 +307,7 @@ class PythonCompiler(ast.NodeVisitor):
                 and decl.mutations['component_type'] == 'Form'
                 and decl.mutations['event_name'] == 'Initialize'
             ):
-                blk.next = decl.statements['DO']
+                cur.next = decl.statements['DO']
                 decl.statements['DO'] = blk
                 break
         else:
@@ -374,7 +388,10 @@ class PythonCompiler(ast.NodeVisitor):
                 },
                 fields={'COMPONENT_SELECTOR': node.id},
             )
-        return self._get_var_block(node.id)
+        is_global = None
+        if not self._global and node.id not in self._scopes[-1]:
+            is_global = True
+        return self._get_var_block(node.id, is_global)
 
     def visit_AnnAssign(self, node):
         if isinstance(node.annotation, ast.Name):
@@ -582,19 +599,30 @@ class PythonCompiler(ast.NodeVisitor):
                 return
             else:
                 self._scopes[-1].add(target.id)
+                if self._global:
+                    self._global_assigns[target.id] = self.visit(node.value)
+                    return
+                    return self._init_var_block(target.id, self.visit(node.value))
                 return self._set_var_block(target.id, self.visit(node.value))
         raise NotSupportedError(f'Assign to {target.__class__.__name__} target')
+
+    def visit_Subscript(self, node):
+        return self._get_proc_block(
+            '__py2ai__get_item__',
+            ['obj', 'key'],
+            [self.visit(node.value), self.visit(node.slice)],
+        )
 
     def visit_FunctionDef(self, node):
         args = [arg.arg for arg in node.args.posonlyargs + node.args.args]
         name = node.name
         self._procs[name] = args
-        self._scopes.append({'__py2ai__return__'})
+        self._scopes.append({'__py2ai__return__'} | set(args))
         self._comps.append({})
         self._annots.append({})
         self._globals.append(set())
         blk = self.visit_nodes(node.body)
-        local_vars = list(self._scopes[-1])
+        local_vars = list(x for x in self._scopes[-1] if x not in args)
         # print('func', name, 'local vars', local_vars)
         for_ = Block(
             'controls_forRange',
@@ -699,6 +727,52 @@ class PythonCompiler(ast.NodeVisitor):
                 params = parse_args(names, node.args, keywords)
                 return func(self, **params)
             is_event = attr_attr.startswith('on_')
+            is_any_event = attr_attr.startswith('on_any_')
+            if is_any_event:
+                if (
+                    not hasattr(components, attr_var)
+                    or getattr(components, attr_var) is Component
+                ):
+                    raise NotSupportedError(
+                        'Call any_event with non-Component subclass'
+                    )
+                spec = ast.parse(
+                    getattr(getattr(components, attr_var), attr_attr).__doc__,
+                    mode='eval',
+                )
+                args = ['component', 'notAlreadyHandled'] + [
+                    cast(ast.Name, x).id for x in cast(ast.Call, spec.body).args
+                ]
+                proc_obj = node.args[0]
+                if not isinstance(proc_obj, ast.Name):
+                    raise NotSupportedError('Call an event register with non-variable')
+                proc_name = proc_obj.id
+                if proc_name not in self._procs:
+                    raise NotSupportedError('Call an event register with unbound var')
+                proc_args = self._procs[proc_name]
+                # print(args, proc_args)
+                if len(args) != len(proc_args):
+                    raise NotSupportedError('Call event register arg count mismatch')
+                return Block(
+                    'component_event',
+                    mutations={
+                        'component_type': attr_var,
+                        'is_generic': 'true',
+                        'event_name': attr_attr[7:],
+                    },
+                    statements={
+                        'DO': Block(
+                            'controls_eval_but_ignore',
+                            values={
+                                'VALUE': self._get_proc_block(
+                                    proc_name,
+                                    proc_args,
+                                    [self._get_var_block(a, False, True) for a in args],
+                                )
+                            },
+                        )
+                    },
+                )
             annot = self._get_annot(attr_var)
             if annot is None:
                 raise NotSupportedError('Call an unannotated object attribute')
@@ -736,7 +810,7 @@ class PythonCompiler(ast.NodeVisitor):
                                 'VALUE': self._get_proc_block(
                                     proc_name,
                                     proc_args,
-                                    [self._get_var_block(a, False) for a in args],
+                                    [self._get_var_block(a, False, True) for a in args],
                                 )
                             },
                         )
@@ -771,7 +845,14 @@ class PythonCompiler(ast.NodeVisitor):
 
     def visit_UnaryOp(self, node):
         if isinstance(node.op, ast.Not):
-            return Block('logic_negate', values={'BOOL': self.visit(node.operand)})
+            return Block(
+                'logic_negate',
+                values={
+                    'BOOL': self._get_proc_block(
+                        '__py2ai__bool__', ['x'], [self.visit(node.operand)]
+                    )
+                },
+            )
         raise NotSupportedError(
             f'UnaryOp unsupported operator {node.op.__class__.__name__}'
         )
@@ -876,7 +957,12 @@ class PythonCompiler(ast.NodeVisitor):
         return Block(
             'controls_if',
             mutations={'elseif': str(elifs), 'else': '1' if ifs[-1].orelse else '0'},
-            values={f'IF{i}': self.visit(x.test) for i, x in enumerate(ifs)},
+            values={
+                f'IF{i}': self._get_proc_block(
+                    '__py2ai__bool__', ['x'], [self.visit(x.test)]
+                )
+                for i, x in enumerate(ifs)
+            },
             statements=dos,
         )
 
