@@ -8,6 +8,7 @@ PAGES = [
     'media',
     'animation',
     'sensors',
+    'social',
     'storage',
     'connectivity',
     'experimental',

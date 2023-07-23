@@ -30,9 +30,7 @@ class AIAProject:
         self.properties = PropertiesDict(
             PROPERTIES.format(class_name=self.package_name, main_name=self.main_name)
         )
-        self._folder = '/'.join(
-            ['src', self.package_name.replace('.', '/'), self.main_name, '']
-        )
+        self._folder = '/'.join(['src', self.package_name.replace('.', '/'), ''])
         if file:
             self.load(file)
 
@@ -54,11 +52,8 @@ class AIAProject:
         with zipfile.ZipFile(file, 'r') as zf:
             with zf.open('youngandroidproject/project.properties') as fprops:
                 self.properties = props = PropertiesDict(fprops.read().decode())
-            main = props['main']
             self.package_name, _, self.main_name = props['main'].rpartition('.')
-            self._folder = _folder = (
-                'src/' + main.rpartition('.')[0].replace('.', '/') + '/'
-            )
+            self._folder = _folder = 'src/' + self.package_name.replace('.', '/') + '/'
             for info in zf.infolist():
                 name = info.filename
                 if name.startswith(_folder) and name.endswith('.scm'):

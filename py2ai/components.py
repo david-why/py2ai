@@ -4722,6 +4722,787 @@ class Thermometer(Component):
         """TemperatureChanged(temperature)"""
         raise NotImplementedError
 
+class ContactPicker(Component):
+    __data__ = {'desc': 'A button that, when clicked on, displays a list of the contacts to choose among. After the user\n has made a selection, the following properties will be set to information about the chosen\n contact:', 'properties': [{'name': 'BackgroundColor', 'type': 'enums.Color', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies the ContactPickerâ\x80\x99s background color as an alpha-red-green-blue\n integer.  If an Image has been set, the color\n change will not be visible until the Image is removed.'}, {'name': 'ContactName', 'type': 'str', 'ro': True, 'do': False, 'bo': True, 'desc': 'Returns the full name of the selected contact, or the empty string if a name is unavailable.'}, {'name': 'ContactUri', 'type': 'str', 'ro': True, 'do': False, 'bo': True, 'desc': 'Returns a URI that specifies the location of the contact on the device.'}, {'name': 'EmailAddress', 'type': 'str', 'ro': True, 'do': False, 'bo': True, 'desc': 'Returns the primary email address of the selected contact, or the empty string if an email\n address is unavailable.'}, {'name': 'EmailAddressList', 'type': 'list', 'ro': True, 'do': False, 'bo': True, 'desc': 'Returns a list of email addresses associated with the selected contact.'}, {'name': 'Enabled', 'type': 'bool', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies whether the ContactPicker should be active and clickable.'}, {'name': 'FontBold', 'type': 'bool', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies whether the text of the ContactPicker should be bold.\n Some fonts do not support bold.'}, {'name': 'FontItalic', 'type': 'bool', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies whether the text of the ContactPicker should be italic.\n Some fonts do not support italic.'}, {'name': 'FontSize', 'type': 'int', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies the text font size of the ContactPicker, measured in sp(scale-independent pixels).'}, {'name': 'FontTypeface', 'type': 'str', 'ro': False, 'do': True, 'bo': False, 'desc': 'Specifies the text font face of the ContactPicker as default, serif, sans\n serif, monospace, or custom font typeface. To add a custom typeface,\n upload a .ttf file to the projectâ\x80\x99s media.'}, {'name': 'Height', 'type': 'int', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies the ContactPickerâ\x80\x99s vertical height, measured in pixels.'}, {'name': 'HeightPercent', 'type': 'int', 'ro': False, 'do': False, 'bo': True, 'desc': 'Specifies the ContactPickerâ\x80\x99s vertical height as a percentage\n of the Screenâ\x80\x99s Height.'}, {'name': 'Image', 'type': 'str', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies the path of the ContactPickerâ\x80\x99s image. If there is both an Image and a\n BackgroundColor specified, only the Image will be visible.'}, {'name': 'PhoneNumber', 'type': 'str', 'ro': True, 'do': False, 'bo': True, 'desc': 'Returns the primary phone number associated with the selected contact, or the empty string if\n no phone number is associated with the contact.'}, {'name': 'PhoneNumberList', 'type': 'list', 'ro': True, 'do': False, 'bo': True, 'desc': 'Returns a list of phone numbers associated with the selected contact.'}, {'name': 'Picture', 'type': 'str', 'ro': True, 'do': False, 'bo': True, 'desc': 'Returns a picture URI for the selected contact, which can be\n used to retrieve the contactâ\x80\x99s photo and other fields.'}, {'name': 'Shape', 'type': 'int', 'ro': False, 'do': True, 'bo': False, 'desc': 'Specifies the shape of the ContactPicker. The valid values for this property are 0 (default),\n 1 (rounded), 2 (rectangle), and 3 (oval). The Shape will not be visible if an\n Image is used.'}, {'name': 'ShowFeedback', 'type': 'bool', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies if a visual feedback should be shown when a ContactPicker with an assigned\n Image is pressed.'}, {'name': 'Text', 'type': 'str', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies the text displayed by the ContactPicker.'}, {'name': 'TextAlignment', 'type': 'int', 'ro': False, 'do': True, 'bo': False, 'desc': 'Specifies the alignment of the ContactPickerâ\x80\x99s text. Valid values are:\n 0 (normal; e.g., left-justified if text is written left to right),\n 1 (center), or\n 2 (opposite; e.g., right-justified if text is written left to right).'}, {'name': 'TextColor', 'type': 'enums.Color', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies the text color of the ContactPicker as an alpha-red-green-blue\n integer.'}, {'name': 'Visible', 'type': 'bool', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies whether the ContactPicker should be visible on the screen.  Value is true\n if the ContactPicker is showing and false if hidden.'}, {'name': 'Width', 'type': 'int', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies the horizontal width of the ContactPicker, measured in pixels.'}, {'name': 'WidthPercent', 'type': 'int', 'ro': False, 'do': False, 'bo': True, 'desc': 'Specifies the horizontal width of the ContactPicker as a percentage\n of the Screenâ\x80\x99s Width.'}], 'events': [{'name': 'AfterPicking', 'args': [], 'desc': 'Event to be raised after the ContactPicker activity returns its\n result and the properties have been filled in.'}, {'name': 'BeforePicking', 'args': [], 'desc': 'Event to raise when the ContactPicker is clicked or the picker is shown\n using the Open method.  This event occurs before the picker is displayed, and\n can be used to prepare the picker before it is shown.'}, {'name': 'GotFocus', 'args': [], 'desc': 'Indicates the cursor moved over the ContactPicker so it is now possible\n to click it.'}, {'name': 'LostFocus', 'args': [], 'desc': 'Indicates the cursor moved away from the ContactPicker so it is now no\n longer possible to click it.'}, {'name': 'TouchDown', 'args': [], 'desc': 'Indicates that the ContactPicker was pressed down.'}, {'name': 'TouchUp', 'args': [], 'desc': 'Indicates that the ContactPicker has been released.'}], 'methods': [{'name': 'Open', 'args': [], 'returns': None, 'desc': 'Opens the ContactPicker, as though the user clicked on it.'}, {'name': 'ViewContact', 'args': [{'name': 'uri', 'type': 'str'}], 'returns': None, 'desc': 'Opens the selected contactâ\x80\x99s entry in the deviceâ\x80\x99s default Contacts app.'}]}
+
+    def __init__(self, /, *, parent: Component=..., BackgroundColor: enums.Color=..., Enabled: bool=..., FontBold: bool=..., FontItalic: bool=..., FontSize: int=..., FontTypeface: str=..., Height: int=..., Image: str=..., Shape: int=..., ShowFeedback: bool=..., Text: str=..., TextAlignment: int=..., TextColor: enums.Color=..., Visible: bool=..., Width: int=...):
+        raise NotImplementedError
+
+    @property
+    def BackgroundColor(self) -> enums.Color:
+        raise NotImplementedError
+
+    @BackgroundColor.setter
+    def BackgroundColor(self, value: enums.Color, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def ContactName(self) -> str:
+        raise NotImplementedError
+
+    @property
+    def ContactUri(self) -> str:
+        raise NotImplementedError
+
+    @property
+    def EmailAddress(self) -> str:
+        raise NotImplementedError
+
+    @property
+    def EmailAddressList(self) -> list:
+        raise NotImplementedError
+
+    @property
+    def Enabled(self) -> bool:
+        raise NotImplementedError
+
+    @Enabled.setter
+    def Enabled(self, value: bool, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def FontBold(self) -> bool:
+        raise NotImplementedError
+
+    @FontBold.setter
+    def FontBold(self, value: bool, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def FontItalic(self) -> bool:
+        raise NotImplementedError
+
+    @FontItalic.setter
+    def FontItalic(self, value: bool, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def FontSize(self) -> int:
+        raise NotImplementedError
+
+    @FontSize.setter
+    def FontSize(self, value: int, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def Height(self) -> int:
+        raise NotImplementedError
+
+    @Height.setter
+    def Height(self, value: int, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def HeightPercent(self) -> int:
+        raise NotImplementedError
+
+    @HeightPercent.setter
+    def HeightPercent(self, value: int, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def Image(self) -> str:
+        raise NotImplementedError
+
+    @Image.setter
+    def Image(self, value: str, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def PhoneNumber(self) -> str:
+        raise NotImplementedError
+
+    @property
+    def PhoneNumberList(self) -> list:
+        raise NotImplementedError
+
+    @property
+    def Picture(self) -> str:
+        raise NotImplementedError
+
+    @property
+    def ShowFeedback(self) -> bool:
+        raise NotImplementedError
+
+    @ShowFeedback.setter
+    def ShowFeedback(self, value: bool, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def Text(self) -> str:
+        raise NotImplementedError
+
+    @Text.setter
+    def Text(self, value: str, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def TextColor(self) -> enums.Color:
+        raise NotImplementedError
+
+    @TextColor.setter
+    def TextColor(self, value: enums.Color, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def Visible(self) -> bool:
+        raise NotImplementedError
+
+    @Visible.setter
+    def Visible(self, value: bool, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def Width(self) -> int:
+        raise NotImplementedError
+
+    @Width.setter
+    def Width(self, value: int, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def WidthPercent(self) -> int:
+        raise NotImplementedError
+
+    @WidthPercent.setter
+    def WidthPercent(self, value: int, /) -> None:
+        raise NotImplementedError
+
+    def Open(self, /) -> None:
+        raise NotImplementedError
+
+    def ViewContact(self, uri: str, /) -> None:
+        raise NotImplementedError
+
+    def on_AfterPicking(self, callback: Callable[[], None], /) -> None:
+        """AfterPicking()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_AfterPicking(callback: Callable[['ContactPicker', bool], None], /) -> None:
+        """AfterPicking()"""
+        raise NotImplementedError
+
+    def on_BeforePicking(self, callback: Callable[[], None], /) -> None:
+        """BeforePicking()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_BeforePicking(callback: Callable[['ContactPicker', bool], None], /) -> None:
+        """BeforePicking()"""
+        raise NotImplementedError
+
+    def on_GotFocus(self, callback: Callable[[], None], /) -> None:
+        """GotFocus()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_GotFocus(callback: Callable[['ContactPicker', bool], None], /) -> None:
+        """GotFocus()"""
+        raise NotImplementedError
+
+    def on_LostFocus(self, callback: Callable[[], None], /) -> None:
+        """LostFocus()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_LostFocus(callback: Callable[['ContactPicker', bool], None], /) -> None:
+        """LostFocus()"""
+        raise NotImplementedError
+
+    def on_TouchDown(self, callback: Callable[[], None], /) -> None:
+        """TouchDown()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_TouchDown(callback: Callable[['ContactPicker', bool], None], /) -> None:
+        """TouchDown()"""
+        raise NotImplementedError
+
+    def on_TouchUp(self, callback: Callable[[], None], /) -> None:
+        """TouchUp()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_TouchUp(callback: Callable[['ContactPicker', bool], None], /) -> None:
+        """TouchUp()"""
+        raise NotImplementedError
+
+class EmailPicker(Component):
+    __data__ = {'desc': 'An EmailPicker is a kind of text box. If the user begins entering the name or email address of\n a contact, the phone will show a dropdown menu of choices that complete the entry. If there are\n many contacts, the dropdown can take several seconds to appear, and can show intermediate\n results while the matches are being computed.', 'properties': [{'name': 'BackgroundColor', 'type': 'enums.Color', 'ro': False, 'do': False, 'bo': False, 'desc': 'The background color of the EmailPicker`. You can choose a color by name in the Designer or in\n the Blocks Editor. The default background color is â\x80\x98defaultâ\x80\x99 (shaded 3-D look).'}, {'name': 'Enabled', 'type': 'bool', 'ro': False, 'do': False, 'bo': False, 'desc': 'If set, user can enter text into the EmailPicker.'}, {'name': 'FontBold', 'type': 'bool', 'ro': False, 'do': True, 'bo': False, 'desc': 'Specifies whether the text of the EmailPicker should be bold.\n Some fonts do not support bold.'}, {'name': 'FontItalic', 'type': 'bool', 'ro': False, 'do': True, 'bo': False, 'desc': 'Specifies whether the text of the EmailPicker should be italic.\n Some fonts do not support italic.'}, {'name': 'FontSize', 'type': 'int', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies the text font size of the EmailPicker, measured in sp(scale-independent pixels).'}, {'name': 'FontTypeface', 'type': 'str', 'ro': False, 'do': True, 'bo': False, 'desc': 'The text font face of the EmailPicker. Valid values are 0 (default), 1 (serif), 2 (sans\n serif), or 3 (monospace).'}, {'name': 'Height', 'type': 'int', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies the EmailPickerâ\x80\x99s vertical height, measured in pixels.'}, {'name': 'HeightPercent', 'type': 'int', 'ro': False, 'do': False, 'bo': True, 'desc': 'Specifies the EmailPickerâ\x80\x99s vertical height as a percentage\n of the Screenâ\x80\x99s Height.'}, {'name': 'Hint', 'type': 'str', 'ro': False, 'do': False, 'bo': False, 'desc': 'EmailPicker hint for the user.'}, {'name': 'Text', 'type': 'str', 'ro': False, 'do': False, 'bo': False, 'desc': 'The text in the EmailPicker, which can be set by the programmer in the Designer or Blocks Editor,\n or it can be entered by the user (unless the Enabled property is false).'}, {'name': 'TextAlignment', 'type': 'int', 'ro': False, 'do': True, 'bo': False, 'desc': 'Specifies the alignment of the EmailPickerâ\x80\x99s text. Valid values are:\n 0 (normal; e.g., left-justified if text is written left to right),\n 1 (center), or\n 2 (opposite; e.g., right-justified if text is written left to right).'}, {'name': 'TextColor', 'type': 'enums.Color', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies the text color of the EmailPicker as an alpha-red-green-blue\n integer.'}, {'name': 'Visible', 'type': 'bool', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies whether the EmailPicker should be visible on the screen.  Value is true\n if the EmailPicker is showing and false if hidden.'}, {'name': 'Width', 'type': 'int', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies the horizontal width of the EmailPicker, measured in pixels.'}, {'name': 'WidthPercent', 'type': 'int', 'ro': False, 'do': False, 'bo': True, 'desc': 'Specifies the horizontal width of the EmailPicker as a percentage\n of the Screenâ\x80\x99s Width.'}], 'events': [{'name': 'GotFocus', 'args': [], 'desc': 'Event raised when the EmailPicker is selected for input, such as by\n the user touching it.'}, {'name': 'LostFocus', 'args': [], 'desc': 'Event raised when the EmailPicker is no longer selected for input, such\n as if the user touches a different text box.'}], 'methods': [{'name': 'RequestFocus', 'args': [], 'returns': None, 'desc': 'Request focus to current EmailPicker.'}]}
+
+    def __init__(self, /, *, parent: Component=..., BackgroundColor: enums.Color=..., Enabled: bool=..., FontBold: bool=..., FontItalic: bool=..., FontSize: int=..., FontTypeface: str=..., Height: int=..., Hint: str=..., Text: str=..., TextAlignment: int=..., TextColor: enums.Color=..., Visible: bool=..., Width: int=...):
+        raise NotImplementedError
+
+    @property
+    def BackgroundColor(self) -> enums.Color:
+        raise NotImplementedError
+
+    @BackgroundColor.setter
+    def BackgroundColor(self, value: enums.Color, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def Enabled(self) -> bool:
+        raise NotImplementedError
+
+    @Enabled.setter
+    def Enabled(self, value: bool, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def FontSize(self) -> int:
+        raise NotImplementedError
+
+    @FontSize.setter
+    def FontSize(self, value: int, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def Height(self) -> int:
+        raise NotImplementedError
+
+    @Height.setter
+    def Height(self, value: int, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def HeightPercent(self) -> int:
+        raise NotImplementedError
+
+    @HeightPercent.setter
+    def HeightPercent(self, value: int, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def Hint(self) -> str:
+        raise NotImplementedError
+
+    @Hint.setter
+    def Hint(self, value: str, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def Text(self) -> str:
+        raise NotImplementedError
+
+    @Text.setter
+    def Text(self, value: str, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def TextColor(self) -> enums.Color:
+        raise NotImplementedError
+
+    @TextColor.setter
+    def TextColor(self, value: enums.Color, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def Visible(self) -> bool:
+        raise NotImplementedError
+
+    @Visible.setter
+    def Visible(self, value: bool, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def Width(self) -> int:
+        raise NotImplementedError
+
+    @Width.setter
+    def Width(self, value: int, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def WidthPercent(self) -> int:
+        raise NotImplementedError
+
+    @WidthPercent.setter
+    def WidthPercent(self, value: int, /) -> None:
+        raise NotImplementedError
+
+    def RequestFocus(self, /) -> None:
+        raise NotImplementedError
+
+    def on_GotFocus(self, callback: Callable[[], None], /) -> None:
+        """GotFocus()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_GotFocus(callback: Callable[['EmailPicker', bool], None], /) -> None:
+        """GotFocus()"""
+        raise NotImplementedError
+
+    def on_LostFocus(self, callback: Callable[[], None], /) -> None:
+        """LostFocus()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_LostFocus(callback: Callable[['EmailPicker', bool], None], /) -> None:
+        """LostFocus()"""
+        raise NotImplementedError
+
+class PhoneCall(Component):
+    __data__ = {'desc': 'A non-visible component that makes a phone call to the number specified in the\n PhoneNumber property, which can be set either in the Designer or Blocks Editor.\n The component has a MakePhoneCall method, enabling the program to launch a phone call.\n You may also use MakePhoneCallDirect to directly initiate a phone call without user\n interaction. However, apps using this block may require further review by Google if submitted\n to the Play Store so it is advised to use MakePhoneCall instead.', 'properties': [{'name': 'PhoneNumber', 'type': 'str', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies the phone number to call.'}], 'events': [{'name': 'IncomingCallAnswered', 'args': [{'name': 'phoneNumber', 'type': 'str'}], 'desc': 'Event indicating that an incoming phone call is answered. phoneNumber is\n the incoming call phone number.'}, {'name': 'PhoneCallEnded', 'args': [{'name': 'status', 'type': 'int'}, {'name': 'phoneNumber', 'type': 'str'}], 'desc': 'Event indicating that a phone call has ended. The status can be any of:\n\n    \n1: Incoming call was missed or rejected\n2: Incoming call was answered and hung up\n3: Outgoing call was hung up.\n\n'}, {'name': 'PhoneCallStarted', 'args': [{'name': 'status', 'type': 'int'}, {'name': 'phoneNumber', 'type': 'str'}], 'desc': 'Event indicating that a phone call has started. The status can be any of:\n\n    \n1: Incoming call is ringing\n2: Outgoing call is dialled\n\n'}], 'methods': [{'name': 'MakePhoneCall', 'args': [], 'returns': None, 'desc': 'Launches the default dialer app set to start a phone call using the number in the\n PhoneNumber property.'}, {'name': 'MakePhoneCallDirect', 'args': [], 'returns': None, 'desc': 'Directly initiates a phone call using the number in the PhoneNumber property,\n bypassing user interaction to start the call. Most apps should use\n MakePhoneCall instead, which requires no permissions.'}]}
+
+    def __init__(self, /, *, parent: Component=..., PhoneNumber: str=...):
+        raise NotImplementedError
+
+    @property
+    def PhoneNumber(self) -> str:
+        raise NotImplementedError
+
+    @PhoneNumber.setter
+    def PhoneNumber(self, value: str, /) -> None:
+        raise NotImplementedError
+
+    def MakePhoneCall(self, /) -> None:
+        raise NotImplementedError
+
+    def MakePhoneCallDirect(self, /) -> None:
+        raise NotImplementedError
+
+    def on_IncomingCallAnswered(self, callback: Callable[[str], None], /) -> None:
+        """IncomingCallAnswered(phoneNumber)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_IncomingCallAnswered(callback: Callable[['PhoneCall', bool, str], None], /) -> None:
+        """IncomingCallAnswered(phoneNumber)"""
+        raise NotImplementedError
+
+    def on_PhoneCallEnded(self, callback: Callable[[int, str], None], /) -> None:
+        """PhoneCallEnded(status, phoneNumber)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_PhoneCallEnded(callback: Callable[['PhoneCall', bool, int, str], None], /) -> None:
+        """PhoneCallEnded(status, phoneNumber)"""
+        raise NotImplementedError
+
+    def on_PhoneCallStarted(self, callback: Callable[[int, str], None], /) -> None:
+        """PhoneCallStarted(status, phoneNumber)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_PhoneCallStarted(callback: Callable[['PhoneCall', bool, int, str], None], /) -> None:
+        """PhoneCallStarted(status, phoneNumber)"""
+        raise NotImplementedError
+
+class PhoneNumberPicker(Component):
+    __data__ = {'desc': 'A button that, when clicked on, displays a list of the contactsâ\x80\x99 phone numbers to choose among.\n After the user has made a selection, the following properties will be set to information about\n the chosen contact:', 'properties': [{'name': 'BackgroundColor', 'type': 'enums.Color', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies the PhoneNumberPickerâ\x80\x99s background color as an alpha-red-green-blue\n integer.  If an Image has been set, the color\n change will not be visible until the Image is removed.'}, {'name': 'ContactName', 'type': 'str', 'ro': True, 'do': False, 'bo': True, 'desc': 'Returns the full name of the selected contact, or the empty string if a name is unavailable.'}, {'name': 'ContactUri', 'type': 'str', 'ro': True, 'do': False, 'bo': True, 'desc': 'Returns a URI that specifies the location of the contact on the device.'}, {'name': 'EmailAddress', 'type': 'str', 'ro': True, 'do': False, 'bo': True, 'desc': 'Returns the primary email address of the selected contact, or the empty string if an email\n address is unavailable.'}, {'name': 'EmailAddressList', 'type': 'list', 'ro': True, 'do': False, 'bo': True, 'desc': 'Returns a list of email addresses associated with the selected contact.'}, {'name': 'Enabled', 'type': 'bool', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies whether the PhoneNumberPicker should be active and clickable.'}, {'name': 'FontBold', 'type': 'bool', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies whether the text of the PhoneNumberPicker should be bold.\n Some fonts do not support bold.'}, {'name': 'FontItalic', 'type': 'bool', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies whether the text of the PhoneNumberPicker should be italic.\n Some fonts do not support italic.'}, {'name': 'FontSize', 'type': 'int', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies the text font size of the PhoneNumberPicker, measured in sp(scale-independent pixels).'}, {'name': 'FontTypeface', 'type': 'str', 'ro': False, 'do': True, 'bo': False, 'desc': 'Specifies the text font face of the PhoneNumberPicker as default, serif, sans\n serif, monospace, or custom font typeface. To add a custom typeface,\n upload a .ttf file to the projectâ\x80\x99s media.'}, {'name': 'Height', 'type': 'int', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies the PhoneNumberPickerâ\x80\x99s vertical height, measured in pixels.'}, {'name': 'HeightPercent', 'type': 'int', 'ro': False, 'do': False, 'bo': True, 'desc': 'Specifies the PhoneNumberPickerâ\x80\x99s vertical height as a percentage\n of the Screenâ\x80\x99s Height.'}, {'name': 'Image', 'type': 'str', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies the path of the PhoneNumberPickerâ\x80\x99s image. If there is both an Image and a\n BackgroundColor specified, only the Image will be visible.'}, {'name': 'PhoneNumber', 'type': 'str', 'ro': True, 'do': False, 'bo': True, 'desc': 'Returns the primary phone number associated with the selected contact, or the empty string if\n no phone number is associated with the contact.'}, {'name': 'PhoneNumberList', 'type': 'list', 'ro': True, 'do': False, 'bo': True, 'desc': 'Returns a list of phone numbers associated with the selected contact.'}, {'name': 'Picture', 'type': 'str', 'ro': True, 'do': False, 'bo': True, 'desc': 'Returns a picture URI for the selected contact, which can be\n used to retrieve the contactâ\x80\x99s photo and other fields.'}, {'name': 'Shape', 'type': 'int', 'ro': False, 'do': True, 'bo': False, 'desc': 'Specifies the shape of the PhoneNumberPicker. The valid values for this property are 0 (default),\n 1 (rounded), 2 (rectangle), and 3 (oval). The Shape will not be visible if an\n Image is used.'}, {'name': 'ShowFeedback', 'type': 'bool', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies if a visual feedback should be shown when a PhoneNumberPicker with an assigned\n Image is pressed.'}, {'name': 'Text', 'type': 'str', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies the text displayed by the PhoneNumberPicker.'}, {'name': 'TextAlignment', 'type': 'int', 'ro': False, 'do': True, 'bo': False, 'desc': 'Specifies the alignment of the PhoneNumberPickerâ\x80\x99s text. Valid values are:\n 0 (normal; e.g., left-justified if text is written left to right),\n 1 (center), or\n 2 (opposite; e.g., right-justified if text is written left to right).'}, {'name': 'TextColor', 'type': 'enums.Color', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies the text color of the PhoneNumberPicker as an alpha-red-green-blue\n integer.'}, {'name': 'Visible', 'type': 'bool', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies whether the PhoneNumberPicker should be visible on the screen.  Value is true\n if the PhoneNumberPicker is showing and false if hidden.'}, {'name': 'Width', 'type': 'int', 'ro': False, 'do': False, 'bo': False, 'desc': 'Specifies the horizontal width of the PhoneNumberPicker, measured in pixels.'}, {'name': 'WidthPercent', 'type': 'int', 'ro': False, 'do': False, 'bo': True, 'desc': 'Specifies the horizontal width of the PhoneNumberPicker as a percentage\n of the Screenâ\x80\x99s Width.'}], 'events': [{'name': 'AfterPicking', 'args': [], 'desc': 'Event to be raised after the PhoneNumberPicker activity returns its\n result and the properties have been filled in.'}, {'name': 'BeforePicking', 'args': [], 'desc': 'Event to raise when the PhoneNumberPicker is clicked or the picker is shown\n using the Open method.  This event occurs before the picker is displayed, and\n can be used to prepare the picker before it is shown.'}, {'name': 'GotFocus', 'args': [], 'desc': 'Indicates the cursor moved over the PhoneNumberPicker so it is now possible\n to click it.'}, {'name': 'LostFocus', 'args': [], 'desc': 'Indicates the cursor moved away from the PhoneNumberPicker so it is now no\n longer possible to click it.'}, {'name': 'TouchDown', 'args': [], 'desc': 'Indicates that the PhoneNumberPicker was pressed down.'}, {'name': 'TouchUp', 'args': [], 'desc': 'Indicates that the PhoneNumberPicker has been released.'}], 'methods': [{'name': 'Open', 'args': [], 'returns': None, 'desc': 'Opens the PhoneNumberPicker, as though the user clicked on it.'}, {'name': 'ViewContact', 'args': [{'name': 'uri', 'type': 'str'}], 'returns': None, 'desc': 'Opens the selected contactâ\x80\x99s entry in the deviceâ\x80\x99s default Contacts app.'}]}
+
+    def __init__(self, /, *, parent: Component=..., BackgroundColor: enums.Color=..., Enabled: bool=..., FontBold: bool=..., FontItalic: bool=..., FontSize: int=..., FontTypeface: str=..., Height: int=..., Image: str=..., Shape: int=..., ShowFeedback: bool=..., Text: str=..., TextAlignment: int=..., TextColor: enums.Color=..., Visible: bool=..., Width: int=...):
+        raise NotImplementedError
+
+    @property
+    def BackgroundColor(self) -> enums.Color:
+        raise NotImplementedError
+
+    @BackgroundColor.setter
+    def BackgroundColor(self, value: enums.Color, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def ContactName(self) -> str:
+        raise NotImplementedError
+
+    @property
+    def ContactUri(self) -> str:
+        raise NotImplementedError
+
+    @property
+    def EmailAddress(self) -> str:
+        raise NotImplementedError
+
+    @property
+    def EmailAddressList(self) -> list:
+        raise NotImplementedError
+
+    @property
+    def Enabled(self) -> bool:
+        raise NotImplementedError
+
+    @Enabled.setter
+    def Enabled(self, value: bool, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def FontBold(self) -> bool:
+        raise NotImplementedError
+
+    @FontBold.setter
+    def FontBold(self, value: bool, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def FontItalic(self) -> bool:
+        raise NotImplementedError
+
+    @FontItalic.setter
+    def FontItalic(self, value: bool, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def FontSize(self) -> int:
+        raise NotImplementedError
+
+    @FontSize.setter
+    def FontSize(self, value: int, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def Height(self) -> int:
+        raise NotImplementedError
+
+    @Height.setter
+    def Height(self, value: int, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def HeightPercent(self) -> int:
+        raise NotImplementedError
+
+    @HeightPercent.setter
+    def HeightPercent(self, value: int, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def Image(self) -> str:
+        raise NotImplementedError
+
+    @Image.setter
+    def Image(self, value: str, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def PhoneNumber(self) -> str:
+        raise NotImplementedError
+
+    @property
+    def PhoneNumberList(self) -> list:
+        raise NotImplementedError
+
+    @property
+    def Picture(self) -> str:
+        raise NotImplementedError
+
+    @property
+    def ShowFeedback(self) -> bool:
+        raise NotImplementedError
+
+    @ShowFeedback.setter
+    def ShowFeedback(self, value: bool, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def Text(self) -> str:
+        raise NotImplementedError
+
+    @Text.setter
+    def Text(self, value: str, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def TextColor(self) -> enums.Color:
+        raise NotImplementedError
+
+    @TextColor.setter
+    def TextColor(self, value: enums.Color, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def Visible(self) -> bool:
+        raise NotImplementedError
+
+    @Visible.setter
+    def Visible(self, value: bool, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def Width(self) -> int:
+        raise NotImplementedError
+
+    @Width.setter
+    def Width(self, value: int, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def WidthPercent(self) -> int:
+        raise NotImplementedError
+
+    @WidthPercent.setter
+    def WidthPercent(self, value: int, /) -> None:
+        raise NotImplementedError
+
+    def Open(self, /) -> None:
+        raise NotImplementedError
+
+    def ViewContact(self, uri: str, /) -> None:
+        raise NotImplementedError
+
+    def on_AfterPicking(self, callback: Callable[[], None], /) -> None:
+        """AfterPicking()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_AfterPicking(callback: Callable[['PhoneNumberPicker', bool], None], /) -> None:
+        """AfterPicking()"""
+        raise NotImplementedError
+
+    def on_BeforePicking(self, callback: Callable[[], None], /) -> None:
+        """BeforePicking()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_BeforePicking(callback: Callable[['PhoneNumberPicker', bool], None], /) -> None:
+        """BeforePicking()"""
+        raise NotImplementedError
+
+    def on_GotFocus(self, callback: Callable[[], None], /) -> None:
+        """GotFocus()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_GotFocus(callback: Callable[['PhoneNumberPicker', bool], None], /) -> None:
+        """GotFocus()"""
+        raise NotImplementedError
+
+    def on_LostFocus(self, callback: Callable[[], None], /) -> None:
+        """LostFocus()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_LostFocus(callback: Callable[['PhoneNumberPicker', bool], None], /) -> None:
+        """LostFocus()"""
+        raise NotImplementedError
+
+    def on_TouchDown(self, callback: Callable[[], None], /) -> None:
+        """TouchDown()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_TouchDown(callback: Callable[['PhoneNumberPicker', bool], None], /) -> None:
+        """TouchDown()"""
+        raise NotImplementedError
+
+    def on_TouchUp(self, callback: Callable[[], None], /) -> None:
+        """TouchUp()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_TouchUp(callback: Callable[['PhoneNumberPicker', bool], None], /) -> None:
+        """TouchUp()"""
+        raise NotImplementedError
+
+class Sharing(Component):
+    __data__ = {'desc': 'Sharing is a non-visible component that enables sharing files and/or messages between your app\n and other apps installed on a device. The component will display a list of the installed apps\n that can handle the information provided, and will allow the user to choose one to share the\n content with, for instance a mail app, a social network app, a texting app, and so on.', 'properties': [], 'events': [], 'methods': [{'name': 'ShareFile', 'args': [{'name': 'file', 'type': 'str'}], 'returns': None, 'desc': 'Shares a file through any capable application installed on the phone by displaying a list of the available apps and allowing the user to choose one from the list. The selected app will open with the file inserted on it.'}, {'name': 'ShareFileWithMessage', 'args': [{'name': 'file', 'type': 'str'}, {'name': 'message', 'type': 'str'}], 'returns': None, 'desc': 'Shares both a file and a message through any capable application installed on the phone by displaying a list of available apps and allowing the user to  choose one from the list. The selected app will open with the file and message inserted on it.'}, {'name': 'ShareMessage', 'args': [{'name': 'message', 'type': 'str'}], 'returns': None, 'desc': 'Shares a message through any capable application installed on the phone by displaying a list of the available apps and allowing the user to choose one from the list. The selected app will open with the message inserted on it.'}]}
+
+    def __init__(self, /, *, parent: Component=...):
+        raise NotImplementedError
+
+    def ShareFile(self, file: str, /) -> None:
+        raise NotImplementedError
+
+    def ShareFileWithMessage(self, file: str, message: str, /) -> None:
+        raise NotImplementedError
+
+    def ShareMessage(self, message: str, /) -> None:
+        raise NotImplementedError
+
+class Texting(Component):
+    __data__ = {'desc': 'A component that will, when the SendMessage method is called, launch the deviceâ\x80\x99s\n preferred texting app to send the text message specified in the SendMessage property\n to the phone number specified in the PhoneNumber property. You may also send text\n messages without user interaction by calling SendMessageDirect instead, but this\n adds dangerous permissions to your final app.', 'properties': [{'name': 'GoogleVoiceEnabled', 'type': 'bool', 'ro': False, 'do': False, 'bo': False, 'desc': 'If this property is true, then SendMessage will attempt to send messages over\n WiFi, using Google voice.'}, {'name': 'Message', 'type': 'str', 'ro': False, 'do': False, 'bo': False, 'desc': 'The message that will be sent when the SendMessage method is called.\n The maximum length of a standard SMS message is usually 170. It may be less for languages\n using diacritical marks.'}, {'name': 'PhoneNumber', 'type': 'str', 'ro': False, 'do': False, 'bo': False, 'desc': 'The number that the message will be sent to when the SendMessage method is called.  The \n number is a text string with the specified digits (e.g., 6505551212).  Dashes, dots, \n and parentheses may be included (e.g., (650)-555-1212) but will be ignored; spaces\n should not be included.'}, {'name': 'ReceivingEnabled', 'type': 'int', 'ro': False, 'do': False, 'bo': False, 'desc': 'If set to 1 (OFF) no messages will be received. If set to 2 (FOREGROUND) or 3 (ALWAYS) the\n component will respond to messages if it is running. In the case of 2 (FOREGROUND), messages\n received while the app is not running are discarded. In the case of 3 (ALWAYS), messages\n receive while the app is not running will show a notification. Selecting the notification\n will bring up the app and signal the MessageReceived event. Messages\n received when the app is dormant will be queued, and so several\n MessageReceived events might appear when the app awakens. As an app\n developer, it would be a good idea to give your users control over this property, so they can\n make their phones ignore text messages when your app is installed.'}], 'events': [{'name': 'MessageReceived', 'args': [{'name': 'number', 'type': 'str'}, {'name': 'messageText', 'type': 'str'}], 'desc': 'Event thatâ\x80\x99s raised when a text message is received by the phone. Using this block will add\n dangerous permissions\n that will require additional approval if your app is submitted to the Google Play Store.'}], 'methods': [{'name': 'SendMessage', 'args': [], 'returns': None, 'desc': 'Launch the phoneâ\x80\x99s default text messaging app with the message and phone number prepopulated.'}, {'name': 'SendMessageDirect', 'args': [], 'returns': None, 'desc': 'Send a text message. Using this block will add\n dangerous permissions\n that will require additional approval if your app is submitted to the Google Play Store.'}]}
+
+    def __init__(self, /, *, parent: Component=..., GoogleVoiceEnabled: bool=..., Message: str=..., PhoneNumber: str=..., ReceivingEnabled: int=...):
+        raise NotImplementedError
+
+    @property
+    def GoogleVoiceEnabled(self) -> bool:
+        raise NotImplementedError
+
+    @GoogleVoiceEnabled.setter
+    def GoogleVoiceEnabled(self, value: bool, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def Message(self) -> str:
+        raise NotImplementedError
+
+    @Message.setter
+    def Message(self, value: str, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def PhoneNumber(self) -> str:
+        raise NotImplementedError
+
+    @PhoneNumber.setter
+    def PhoneNumber(self, value: str, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def ReceivingEnabled(self) -> int:
+        raise NotImplementedError
+
+    @ReceivingEnabled.setter
+    def ReceivingEnabled(self, value: int, /) -> None:
+        raise NotImplementedError
+
+    def SendMessage(self, /) -> None:
+        raise NotImplementedError
+
+    def SendMessageDirect(self, /) -> None:
+        raise NotImplementedError
+
+    def on_MessageReceived(self, callback: Callable[[str, str], None], /) -> None:
+        """MessageReceived(number, messageText)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_MessageReceived(callback: Callable[['Texting', bool, str, str], None], /) -> None:
+        """MessageReceived(number, messageText)"""
+        raise NotImplementedError
+
+class Twitter(Component):
+    __data__ = {'desc': 'A non-visible component that enables communication with Twitter. Once a\n user has logged into their Twitter account (and the authorization has been confirmed successful\n by the IsAuthorized event), many more operations are available:', 'properties': [{'name': 'ConsumerKey', 'type': 'str', 'ro': False, 'do': False, 'bo': False, 'desc': 'The consumer key to be used when authorizing with Twitter via OAuth.'}, {'name': 'ConsumerSecret', 'type': 'str', 'ro': False, 'do': False, 'bo': False, 'desc': 'The consumer secret to be used when authorizing with Twitter via OAuth.'}, {'name': 'DirectMessages', 'type': 'list', 'ro': True, 'do': False, 'bo': True, 'desc': 'This property contains a list of the most recent messages mentioning the logged-in user.\n Initially, the list is empty. To set it, the program must:\n\n    \nCall the Authorize method.\nWait for the IsAuthorized event.\nCall the RequestDirectMessages method.\n 4, Wait for the DirectMessagesReceived event.\n\nThe value of this property will then be set to the list of direct messages retrieved (and\n maintain that value until any subsequent call to RequestDirectMessages).\n'}, {'name': 'Followers', 'type': 'list', 'ro': True, 'do': False, 'bo': True, 'desc': 'This property contains a list of the followers of the logged-in user. Initially, the list is\n empty. To set it, the program must:\n\n    \nCall the Authorize method.\nWait for the IsAuthorized event.\nCall the RequestFollowers method.\nWait for the FollowersReceived event.\n\nThe value of this property will then be set to the list of followers (and maintain its value\n until any subsequent call to RequestFollowers).\n'}, {'name': 'FriendTimeline', 'type': 'list', 'ro': True, 'do': False, 'bo': True, 'desc': 'This property contains the 20 most recent messages of users being followed. Initially, the\n list is empty. To set it, the program must:\n\n    \nCall the Authorize method.\nWait for the IsAuthorized event.\nSpecify users to follow with one or more calls to the Follow method.\nCall the RequestFriendTimeline  method.\nWait for the FriendTimelineReceived event.\n\nThe value of this property will then be set to the list of messages (and maintain its value\n until any subsequent call to RequestFriendTimeline.\n'}, {'name': 'Mentions', 'type': 'list', 'ro': True, 'do': False, 'bo': True, 'desc': 'This property contains a list of mentions of the logged-in user. Initially, the list is empty.\n To set it, the program must:\n\n    \nCall the Authorize method.\nWait for the IsAuthorized event.\nCall the RequestMentions method.\nWait for the MentionsReceived event.\n\nThe value of this property will then be set to the list of mentions (and will maintain its\n value until any subsequent calls to RequestMentions).\n'}, {'name': 'SearchResults', 'type': 'list', 'ro': True, 'do': False, 'bo': True, 'desc': 'This property, which is initially empty, is set to a list of search results after the program:\n\n    \nCalls the SearchTwitter method.\nWaits for the SearchSuccessful event.\n\nThe value of the property will then be the same as the parameter to\n SearchSuccessful. Note that it is not necessary to call the Authorize\n method before calling SearchTwitter.\n'}, {'name': 'Username', 'type': 'str', 'ro': True, 'do': False, 'bo': True, 'desc': 'The user name of the authorized user. Empty if there is no authorized user.'}], 'events': [{'name': 'DirectMessagesReceived', 'args': [{'name': 'messages', 'type': 'list'}], 'desc': 'This event is raised when the recent messages requested through\n RequestDirectMessages have been retrieved. A list of the messages can then be found\n in the messages parameter or the DirectMessages property.'}, {'name': 'FollowersReceived', 'args': [{'name': 'followers2', 'type': 'list'}], 'desc': 'This event is raised when all of the followers of the logged-in user requested through\n RequestFollowers have been retrieved. A list of the followers can then be found in\n the followers parameter or the Followers property.'}, {'name': 'FriendTimelineReceived', 'args': [{'name': 'timeline', 'type': 'list'}], 'desc': 'This event is raised when the messages requested through RequestFriendTimeline have\n been retrieved. The timeline parameter and the FriendTimeline\n property will contain a list of lists, where each sub-list contains a status update of the\n form (username message).'}, {'name': 'IsAuthorized', 'args': [], 'desc': 'This event is raised after the program calls Authorize if the authorization was\n successful. It is also called after a call to CheckAuthorized if we already have a\n valid access token. After this event has been raised, any other method for this component can\n be called.'}, {'name': 'MentionsReceived', 'args': [{'name': 'mentions', 'type': 'list'}], 'desc': 'This event is raised when the mentions of the logged-in user requested through\n RequestMentions have been retrieved. A list of the mentions can then be found in\n the mentions parameter or the Mentions property.'}, {'name': 'SearchSuccessful', 'args': [{'name': 'searchResults', 'type': 'list'}], 'desc': 'This event is raised when the results of the search requested through\n SearchTwitter have been retrieved. A list of the results can then be found in\n the results parameter or the SearchResults property.'}], 'methods': [{'name': 'Authorize', 'args': [], 'returns': None, 'desc': 'Redirects user to login to Twitter via the Web browser using the OAuth protocol if we donâ\x80\x99t already have authorization.'}, {'name': 'CheckAuthorized', 'args': [], 'returns': None, 'desc': 'Check whether we already have access, and if so, causes the IsAuthorized event\n handler to be called.'}, {'name': 'DeAuthorize', 'args': [], 'returns': None, 'desc': 'Removes Twitter authorization from this running app instance.'}, {'name': 'DirectMessage', 'args': [{'name': 'user', 'type': 'str'}, {'name': 'message', 'type': 'str'}], 'returns': None, 'desc': 'This sends a direct (private) message to the specified user. The message will be trimmed if it\n exceeds 160 characters.\n\n    Requirements: This should only be called after the IsAuthorized event has\n been raised, indicating that the user has successfully logged in to Twitter.\n'}, {'name': 'Follow', 'args': [{'name': 'user', 'type': 'str'}], 'returns': None, 'desc': 'Starts following a user.'}, {'name': 'RequestDirectMessages', 'args': [], 'returns': None, 'desc': 'Requests the 20 most recent direct messages sent to the logged-in user. When the messages have\n been retrieved, the system will raise the DirectMessagesReceived event and set\n the DirectMessages property to the list of messages.\n\n    Requirements: This should only be called after the IsAuthorized event has\n been raised, indicating that the user has successfully logged in to Twitter.\n'}, {'name': 'RequestFollowers', 'args': [], 'returns': None, 'desc': 'Gets who is following you.'}, {'name': 'RequestFriendTimeline', 'args': [], 'returns': None, 'desc': 'Gets the most recent 20 messages in the userâ\x80\x99s timeline.'}, {'name': 'RequestMentions', 'args': [], 'returns': None, 'desc': 'Requests the 20 most recent mentions of the logged-in user. When the mentions have been\n retrieved, the system will raise the MentionsReceived event and set the\n Mentions property to the list of mentions.\n\n    Requirements: This should only be called after the IsAuthorized event has\n been raised, indicating that the user has successfully logged in to Twitter.\n'}, {'name': 'SearchTwitter', 'args': [{'name': 'query', 'type': 'str'}], 'returns': None, 'desc': 'This searches Twitter for the given String query.\n\n    Requirements: This should only be called after the IsAuthorized event has\n been raised, indicating that the user has successfully logged in to Twitter.\n'}, {'name': 'StopFollowing', 'args': [{'name': 'user', 'type': 'str'}], 'returns': None, 'desc': 'Stops following a user.'}, {'name': 'Tweet', 'args': [{'name': 'status', 'type': 'str'}], 'returns': None, 'desc': 'This sends a tweet as the logged-in user with the specified Text, which will be trimmed if it\n exceeds 160 characters.\n\n    Requirements: This should only be called after the IsAuthorized event has\n been raised, indicating that the user has successfully logged in to Twitter.\n'}, {'name': 'TweetWithImage', 'args': [{'name': 'status', 'type': 'str'}, {'name': 'imagePath', 'type': 'str'}], 'returns': None, 'desc': 'This sends a tweet as the logged-in user with the specified Text and a path to the image to be\n uploaded, which will be trimmed if it exceeds 160 characters. If an image is not found or\n invalid, the update will not be sent.\n\n    Requirements: This should only be called after the IsAuthorized event has\n been raised, indicating that the user has successfully logged in to Twitter.\n'}]}
+
+    def __init__(self, /, *, parent: Component=..., ConsumerKey: str=..., ConsumerSecret: str=...):
+        raise NotImplementedError
+
+    @property
+    def ConsumerKey(self) -> str:
+        raise NotImplementedError
+
+    @ConsumerKey.setter
+    def ConsumerKey(self, value: str, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def ConsumerSecret(self) -> str:
+        raise NotImplementedError
+
+    @ConsumerSecret.setter
+    def ConsumerSecret(self, value: str, /) -> None:
+        raise NotImplementedError
+
+    @property
+    def DirectMessages(self) -> list:
+        raise NotImplementedError
+
+    @property
+    def Followers(self) -> list:
+        raise NotImplementedError
+
+    @property
+    def FriendTimeline(self) -> list:
+        raise NotImplementedError
+
+    @property
+    def Mentions(self) -> list:
+        raise NotImplementedError
+
+    @property
+    def SearchResults(self) -> list:
+        raise NotImplementedError
+
+    @property
+    def Username(self) -> str:
+        raise NotImplementedError
+
+    def Authorize(self, /) -> None:
+        raise NotImplementedError
+
+    def CheckAuthorized(self, /) -> None:
+        raise NotImplementedError
+
+    def DeAuthorize(self, /) -> None:
+        raise NotImplementedError
+
+    def DirectMessage(self, user: str, message: str, /) -> None:
+        raise NotImplementedError
+
+    def Follow(self, user: str, /) -> None:
+        raise NotImplementedError
+
+    def RequestDirectMessages(self, /) -> None:
+        raise NotImplementedError
+
+    def RequestFollowers(self, /) -> None:
+        raise NotImplementedError
+
+    def RequestFriendTimeline(self, /) -> None:
+        raise NotImplementedError
+
+    def RequestMentions(self, /) -> None:
+        raise NotImplementedError
+
+    def SearchTwitter(self, query: str, /) -> None:
+        raise NotImplementedError
+
+    def StopFollowing(self, user: str, /) -> None:
+        raise NotImplementedError
+
+    def Tweet(self, status: str, /) -> None:
+        raise NotImplementedError
+
+    def TweetWithImage(self, status: str, imagePath: str, /) -> None:
+        raise NotImplementedError
+
+    def on_DirectMessagesReceived(self, callback: Callable[[list], None], /) -> None:
+        """DirectMessagesReceived(messages)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_DirectMessagesReceived(callback: Callable[['Twitter', bool, list], None], /) -> None:
+        """DirectMessagesReceived(messages)"""
+        raise NotImplementedError
+
+    def on_FollowersReceived(self, callback: Callable[[list], None], /) -> None:
+        """FollowersReceived(followers2)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_FollowersReceived(callback: Callable[['Twitter', bool, list], None], /) -> None:
+        """FollowersReceived(followers2)"""
+        raise NotImplementedError
+
+    def on_FriendTimelineReceived(self, callback: Callable[[list], None], /) -> None:
+        """FriendTimelineReceived(timeline)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_FriendTimelineReceived(callback: Callable[['Twitter', bool, list], None], /) -> None:
+        """FriendTimelineReceived(timeline)"""
+        raise NotImplementedError
+
+    def on_IsAuthorized(self, callback: Callable[[], None], /) -> None:
+        """IsAuthorized()"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_IsAuthorized(callback: Callable[['Twitter', bool], None], /) -> None:
+        """IsAuthorized()"""
+        raise NotImplementedError
+
+    def on_MentionsReceived(self, callback: Callable[[list], None], /) -> None:
+        """MentionsReceived(mentions)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_MentionsReceived(callback: Callable[['Twitter', bool, list], None], /) -> None:
+        """MentionsReceived(mentions)"""
+        raise NotImplementedError
+
+    def on_SearchSuccessful(self, callback: Callable[[list], None], /) -> None:
+        """SearchSuccessful(searchResults)"""
+        raise NotImplementedError
+
+    @staticmethod
+    def on_any_SearchSuccessful(callback: Callable[['Twitter', bool, list], None], /) -> None:
+        """SearchSuccessful(searchResults)"""
+        raise NotImplementedError
+
 class CloudDB(Component):
     __data__ = {'desc': 'The CloudDB component is a Non-visible component that allows you to store data on a Internet\n connected database server (using Redis software). This allows the users of your App to share\n data with each other. By default data will be stored in a server maintained by MIT, however you\n can setup and run your own server. Set the RedisServer property and\n RedisPort property to access your own server.', 'properties': [{'name': 'ProjectID', 'type': 'str', 'ro': True, 'do': False, 'bo': False, 'desc': 'Gets the ProjectID for this CloudDB project.'}, {'name': 'RedisPort', 'type': 'int', 'ro': True, 'do': False, 'bo': False, 'desc': 'The Redis Server port to use. Defaults to 6381'}, {'name': 'RedisServer', 'type': 'str', 'ro': True, 'do': False, 'bo': False, 'desc': 'The Redis Server to use to store data. A setting of â\x80\x9cDEFAULTâ\x80\x9d means that the MIT server will be used.'}, {'name': 'Token', 'type': 'str', 'ro': True, 'do': True, 'bo': False, 'desc': 'This field contains the authentication token used to login to the backed Redis server. For the\n â\x80\x9cDEFAULTâ\x80\x9d server, do not edit this value, the system will fill it in for you. A system\n administrator may also provide a special value to you which can be used to share data between\n multiple projects from multiple people. If using your own Redis server, set a password in the\n serverâ\x80\x99s config and enter it here.'}, {'name': 'UseSSL', 'type': 'bool', 'ro': True, 'do': True, 'bo': False, 'desc': 'Set to true to use SSL to talk to CloudDB/Redis server. This should be set to True for the â\x80\x9cDEFAULTâ\x80\x9d server.'}], 'events': [{'name': 'CloudDBError', 'args': [{'name': 'message', 'type': 'str'}], 'desc': 'Indicates that an error occurred while communicating with the CloudDB Redis server.'}, {'name': 'DataChanged', 'args': [{'name': 'tag', 'type': 'str'}, {'name': 'value', 'type': 'Any'}], 'desc': 'Indicates that the data in the CloudDB project has changed. Launches an event with the\n tag that has been updated and the value it now has.'}, {'name': 'FirstRemoved', 'args': [{'name': 'value', 'type': 'Any'}], 'desc': 'Event triggered by the RemoveFirstFromList function. The argument\n value is the object that was the first in the list, and which is now\n removed.'}, {'name': 'GotValue', 'args': [{'name': 'tag', 'type': 'str'}, {'name': 'value', 'type': 'Any'}], 'desc': 'Indicates that a GetValue request has succeeded.'}, {'name': 'TagList', 'args': [{'name': 'value', 'type': 'list'}], 'desc': 'Event triggered when we have received the list of known tags. Run in response to a call to the\n GetTagList function.'}, {'name': 'UpdateDone', 'args': [{'name': 'tag', 'type': 'str'}, {'name': 'operation', 'type': 'str'}], 'desc': 'Indicates that operations that store data to CloudDB have completed.'}], 'methods': [{'name': 'AppendValueToList', 'args': [{'name': 'tag', 'type': 'str'}, {'name': 'itemToAdd', 'type': 'Any'}], 'returns': None, 'desc': 'Append a value to the end of a list atomically. If two devices use this function simultaneously, both will be appended and no data lost.'}, {'name': 'ClearTag', 'args': [{'name': 'tag', 'type': 'str'}], 'returns': None, 'desc': 'Remove the tag from CloudDB.'}, {'name': 'CloudConnected', 'args': [], 'returns': 'bool', 'desc': 'Returns true if we are on the network and will likely be able to connect to\n the CloudDB server.'}, {'name': 'GetTagList', 'args': [], 'returns': None, 'desc': 'Asks CloudDB to retrieve all the tags belonging to this project. The\n resulting list is returned in the event TagList.'}, {'name': 'GetValue', 'args': [{'name': 'tag', 'type': 'str'}, {'name': 'valueIfTagNotThere', 'type': 'Any'}], 'returns': None, 'desc': 'GetValue asks CloudDB to get the value stored under the given tag.\n It will pass the result to the GotValue will be given.'}, {'name': 'RemoveFirstFromList', 'args': [{'name': 'tag', 'type': 'str'}], 'returns': None, 'desc': 'Obtain the first element of a list and atomically remove it. If two devices use this function\n simultaneously, one will get the first element and the the other will get the second element,\n or an error if there is no available element. When the element is available, the\n FirstRemoved event will be triggered.'}, {'name': 'StoreValue', 'args': [{'name': 'tag', 'type': 'str'}, {'name': 'valueToStore', 'type': 'Any'}], 'returns': None, 'desc': 'Asks CloudDB to store the given value under the given\n tag.'}]}
 

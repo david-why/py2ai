@@ -6,12 +6,12 @@ from inspect import getfullargspec, signature
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Type, Union, cast
 
-from . import components
-from .aia import Screen
-from .blockly import Block, BlocklyProject
-from .calls import ATTR_CALLS, CALLS
-from .components import Component, Form
-from .const import VERSIONS
+from py2ai import components, enums
+from py2ai.aia import Screen
+from py2ai.blockly import Block, BlocklyProject
+from py2ai.calls import ATTR_CALLS, CALLS
+from py2ai.components import Component, Form
+from py2ai.const import VERSIONS
 
 LIB = Path(__file__).parent / 'lib.xml'
 ADD_COMPONENTS = [
@@ -442,14 +442,19 @@ class PythonCompiler(ast.NodeVisitor):
             raise NotSupportedError('Assign has more than 1 targets')
         target = node.targets[0]
         if isinstance(target, ast.Subscript):
-            return self._get_proc_block(
-                '__py2ai__set_item__',
-                ['obj', 'key', 'value'],
-                [
-                    self.visit(target.value),
-                    self.visit(target.slice),
-                    self.visit(node.value),
-                ],
+            return Block(
+                'controls_eval_but_ignore',
+                values={
+                    'VALUE': self._get_proc_block(
+                        '__py2ai__set_item__',
+                        ['obj', 'key', 'value'],
+                        [
+                            self.visit(target.value),
+                            self.visit(target.slice),
+                            self.visit(node.value),
+                        ],
+                    )
+                },
             )
         if isinstance(target, ast.Attribute):
             attr_obj = target.value
@@ -703,6 +708,16 @@ class PythonCompiler(ast.NodeVisitor):
     def visit_Attribute(self, node):
         if not isinstance(node.value, ast.Name):
             raise NotSupportedError('Attribute of non-variable')
+        if hasattr(enums, node.value.id):
+            cls = getattr(enums, node.value.id)
+            if issubclass(cls, enums.AI2Enum) and cls is not enums.AI2Enum:
+                return Block(
+                    'helpers_dropdown',
+                    mutations={'key': node.value.id},
+                    fields={'OPTION': getattr(cls, node.attr).value},
+                )
+            elif issubclass(cls, enums.AI2Helper) and cls is not enums.AI2Helper:
+                return self.visit(ast.Constant(value=getattr(cls, node.attr)))
         var = node.value.id
         annot = self._get_annot(var)
         if annot is None:
