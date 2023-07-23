@@ -58,6 +58,7 @@ for page in pages:
             bases=[ast.Name(id='Component', ctx=ast.Load())],
             keywords=[],
             body=[
+                ast.Expr(value=ast.Constant(value=comp['desc'])),
                 ast.Assign(
                     targets=[ast.Name(id='__data__', ctx=ast.Store())],
                     value=ast_dumps(comp),
@@ -105,7 +106,10 @@ for page in pages:
                     kwonlyargs=[],
                     defaults=[],
                 ),
-                body=[not_implemented],
+                body=[
+                    ast.Expr(value=ast.Constant(value=prop['desc'])),
+                    not_implemented,
+                ],
                 decorator_list=[ast.Name(id='property', ctx=ast.Load())],
                 returns=ast.Name(id=prop['type'], ctx=ast.Load()),
             )
@@ -154,7 +158,7 @@ for page in pages:
                     kwonlyargs=[],
                     defaults=[],
                 ),
-                body=[not_implemented],
+                body=[ast.Expr(value=ast.Constant(value=method['desc'])), not_implemented],
                 decorator_list=[],
                 returns=ast.Name(id=method['returns'] or 'None', ctx=ast.Load()),
             )
@@ -162,7 +166,8 @@ for page in pages:
         for event in comp['events']:
             event_name = event['name']
             print(f'building event {event_name}')
-            doc = f'{event_name}({", ".join(x["name"] for x in event["args"])})'
+            doc = f'{event_name}({", ".join(x["name"] for x in event["args"])})\n\n'
+            doc += event['desc']
             stmt = _function(
                 name=f'on_{event_name}',
                 args=ast.arguments(

@@ -1,5 +1,5 @@
 import json, requests
-from bs4 import BeautifulSoup, Tag
+from bs4 import BeautifulSoup, Tag, PageElement
 from copy import deepcopy as copy
 
 PAGES = [
@@ -55,6 +55,21 @@ def _get_type(clazz, comp=..., prop=...):
 
 
 index = []
+
+
+def get_text(self):
+    return (
+        self.get_text()
+        .replace('â\x80\x98', "'")
+        .replace('â\x80\x99', "'")
+        .replace('â\x80\x9c', '"')
+        .replace('â\x80\x9d', '"')
+        .replace('\n ', '\n')
+    )
+
+
+# patch .text so the quotation marks are ok
+PageElement.text = property(get_text)  # type: ignore
 
 
 for page in PAGES:

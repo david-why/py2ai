@@ -789,7 +789,9 @@ class PythonCompiler(ast.NodeVisitor):
                         'Call any_event with non-Component subclass'
                     )
                 spec = ast.parse(
-                    getattr(getattr(components, attr_var), attr_attr).__doc__,
+                    getattr(
+                        getattr(components, attr_var), attr_attr
+                    ).__doc__.splitlines()[0],
                     mode='eval',
                 )
                 args = ['component', 'notAlreadyHandled'] + [
@@ -834,7 +836,9 @@ class PythonCompiler(ast.NodeVisitor):
             if not hasattr(ann, attr_attr):
                 raise NotSupportedError('Call a nonexistent component method')
             if is_event:
-                spec = ast.parse(getattr(ann, attr_attr).__doc__, mode='eval')
+                spec = ast.parse(
+                    getattr(ann, attr_attr).__doc__.splitlines()[0], mode='eval'
+                )
                 args = [cast(ast.Name, x).id for x in cast(ast.Call, spec.body).args]
                 proc_obj = node.args[0]
                 if not isinstance(proc_obj, ast.Name):
