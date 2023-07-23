@@ -1938,21 +1938,7 @@ behavior of your app and is needed up front, such as location services for a nav
 Device back button pressed."""
         raise NotImplementedError
 
-    @staticmethod
-    def on_any_BackPressed(callback: Callable[['Form', bool], None], /) -> None:
-        """BackPressed()
-
-Device back button pressed."""
-        raise NotImplementedError
-
     def on_ErrorOccurred(self, callback: Callable[[Component, str, int, str], None], /) -> None:
-        """ErrorOccurred(component, functionName, errorNumber, message)
-
-Event raised when an error occurs. Only some errors will raise this condition.  For those errors, the system will show a notification by default.  You can use this event handler to prescribe an error behavior different than the default."""
-        raise NotImplementedError
-
-    @staticmethod
-    def on_any_ErrorOccurred(callback: Callable[['Form', bool, Component, str, int, str], None], /) -> None:
         """ErrorOccurred(component, functionName, errorNumber, message)
 
 Event raised when an error occurs. Only some errors will raise this condition.  For those errors, the system will show a notification by default.  You can use this event handler to prescribe an error behavior different than the default."""
@@ -1964,34 +1950,13 @@ Event raised when an error occurs. Only some errors will raise this condition.  
 The Initialize event is run when the Screen starts and is only run once per screen."""
         raise NotImplementedError
 
-    @staticmethod
-    def on_any_Initialize(callback: Callable[['Form', bool], None], /) -> None:
-        """Initialize()
-
-The Initialize event is run when the Screen starts and is only run once per screen."""
-        raise NotImplementedError
-
     def on_OtherScreenClosed(self, callback: Callable[[str, Any], None], /) -> None:
         """OtherScreenClosed(otherScreenName, result)
 
 Event raised when another screen has closed and control has returned to this screen."""
         raise NotImplementedError
 
-    @staticmethod
-    def on_any_OtherScreenClosed(callback: Callable[['Form', bool, str, Any], None], /) -> None:
-        """OtherScreenClosed(otherScreenName, result)
-
-Event raised when another screen has closed and control has returned to this screen."""
-        raise NotImplementedError
-
     def on_PermissionDenied(self, callback: Callable[[Component, str, str], None], /) -> None:
-        """PermissionDenied(component, functionName, permissionName)
-
-Event to handle when the app user has denied a needed permission."""
-        raise NotImplementedError
-
-    @staticmethod
-    def on_any_PermissionDenied(callback: Callable[['Form', bool, Component, str, str], None], /) -> None:
         """PermissionDenied(component, functionName, permissionName)
 
 Event to handle when the app user has denied a needed permission."""
@@ -2004,22 +1969,7 @@ Event to handle when the app user has granted a needed permission. This event is
 granted in response to the AskForPermission method."""
         raise NotImplementedError
 
-    @staticmethod
-    def on_any_PermissionGranted(callback: Callable[['Form', bool, str], None], /) -> None:
-        """PermissionGranted(permissionName)
-
-Event to handle when the app user has granted a needed permission. This event is only run when permission is
-granted in response to the AskForPermission method."""
-        raise NotImplementedError
-
     def on_ScreenOrientationChanged(self, callback: Callable[[], None], /) -> None:
-        """ScreenOrientationChanged()
-
-Screen orientation changed"""
-        raise NotImplementedError
-
-    @staticmethod
-    def on_any_ScreenOrientationChanged(callback: Callable[['Form', bool], None], /) -> None:
         """ScreenOrientationChanged()
 
 Screen orientation changed"""

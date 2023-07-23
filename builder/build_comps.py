@@ -240,7 +240,8 @@ for page in pages:
                 decorator_list=[ast.Name(id='staticmethod', ctx=ast.Load())],
                 returns=ast.Name(id='None', ctx=ast.Load()),
             )
-            cls.body.append(stmt)
+            if comp_name != 'Form':
+                cls.body.append(stmt)
         stmts.append(cls)
 
 with open('components.py', 'w') as f:
