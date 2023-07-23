@@ -13,6 +13,7 @@ Call = Tuple[List[str], Func]
 
 CALLS: Dict[str, Dict[int, Call]] = {}
 ATTR_CALLS: Dict[Tuple[str, str], Dict[int, Call]] = {}
+METHODS: Dict[str, Dict[int, Tuple[List[str], str]]] = {}
 
 
 def _register(
@@ -38,6 +39,13 @@ def _aregister(
         return func
 
     return deco
+
+
+def _mregister(method: str, args: List[str], name: Optional[str] = None):
+    METHODS.setdefault(method, {})[len(args)] = (
+        args,
+        name or f'__py2ai__meth__{method}__',
+    )
 
 
 @_register(['__value'])
@@ -300,6 +308,14 @@ def web_get(comp, **kwargs):
 
 @_register(['url'])
 @_register(['url', 'callback'])
+@_register(['url', 'callback', 'data'])
+@_register(['url', 'callback', 'data', 'headers'])
+def web_post(comp, **kwargs):
+    return _web_request(comp, 'PostText', **kwargs)
+
+
+@_register(['url'])
+@_register(['url', 'callback'])
 @_register(['url', 'callback', 'headers'])
 def web_delete(comp, **kwargs):
     return _web_request(comp, 'Delete', **kwargs)
@@ -352,6 +368,16 @@ def randint(comp, a, b):
     return Block('math_random_int', values={'FROM': comp.visit(a), 'TO': comp.visit(b)})
 
 
+@_aregister('random', ['seq'])
+def choice(comp, seq):
+    return Block(
+        'lists_pick_random_item',
+        values={
+            'LIST': comp._get_proc_block('__py2ai__iter__', ['x'], [comp.visit(seq)])
+        },
+    )
+
+
 @_aregister('json', ['obj'])
 def dumps(comp, obj):
     return Block(
@@ -380,3 +406,7 @@ def loads(comp, s):
         fields={'COMPONENT_SELECTOR': '__py2ai__json__'},
         values={'ARG0': comp.visit(s)},
     )
+
+
+_mregister('append', ['x'])
+_mregister('pop', ['x'])

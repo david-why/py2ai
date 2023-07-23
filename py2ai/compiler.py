@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Optional, Set, Type, Union, cast
 from py2ai import components, enums
 from py2ai.aia import Screen
 from py2ai.blockly import Block, BlocklyProject
-from py2ai.calls import ATTR_CALLS, CALLS
+from py2ai.calls import ATTR_CALLS, CALLS, METHODS
 from py2ai.components import Component, Form
 from py2ai.const import VERSIONS
 
@@ -636,6 +636,24 @@ class PythonCompiler(ast.NodeVisitor):
         )
 
     def visit_Subscript(self, node):
+        if isinstance(node.slice, ast.Slice):
+            slice = node.slice
+            return self._get_proc_block(
+                '__py2ai__get_item_slice__',
+                ['obj', 'start', 'end', 'step'],
+                [
+                    self.visit(node.value),
+                    self.visit(slice.lower)
+                    if slice.lower is not None
+                    else self._get_null_block(),
+                    self.visit(slice.upper)
+                    if slice.upper is not None
+                    else self._get_null_block(),
+                    self.visit(slice.step)
+                    if slice.step is not None
+                    else self._get_null_block(),
+                ],
+            )
         return self._get_proc_block(
             '__py2ai__get_item__',
             ['obj', 'key'],
@@ -766,18 +784,33 @@ class PythonCompiler(ast.NodeVisitor):
         keywords = {k.arg: k.value for k in node.keywords if k.arg}
         if isinstance(node.func, ast.Attribute):
             attr_obj = node.func.value
+            attr_attr = node.func.attr
+            if attr_attr in METHODS:
+                calls = METHODS[attr_attr]
+                arg_len = len(node.args + node.keywords)
+                if arg_len not in calls and -1 not in calls:
+                    raise NotSupportedError('Call method with wrong argument count')
+                call = calls[arg_len] if arg_len in calls else calls[-1]
+                names, proc = call
+                params = parse_args(names, node.args, keywords)
+                args = [params[name] for name in names]
+                return self._get_proc_block(
+                    proc,
+                    ['self'] + names,
+                    [self.visit(attr_obj)] + [self.visit(param) for param in args],
+                )
             if not isinstance(attr_obj, ast.Name):
                 raise NotSupportedError('Call attribute of non-variable')
             attr_var = attr_obj.id
-            attr_attr = node.func.attr
             if (attr_var, attr_attr) in ATTR_CALLS:
                 calls = ATTR_CALLS[attr_var, attr_attr]
-                if len(node.args) not in calls and -1 not in calls:
+                arg_len = len(node.args + node.keywords)
+                if arg_len not in calls and -1 not in calls:
                     raise NotSupportedError('Call function with wrong argument count')
-                call = calls[len(node.args)] if len(node.args) in calls else calls[-1]
+                call = calls[arg_len] if arg_len in calls else calls[-1]
                 names, func = call
-                params = parse_args(names, node.args, keywords)
-                return func(self, **params)
+                args = parse_args(names, node.args, keywords)
+                return func(self, **args)
             is_event = attr_attr.startswith('on_')
             is_any_event = attr_attr.startswith('on_any_')
             if is_any_event:
@@ -887,12 +920,13 @@ class PythonCompiler(ast.NodeVisitor):
             raise NotSupportedError('Call a weird thing')
         if node.func.id in CALLS:
             calls = CALLS[node.func.id]
-            if len(node.args) not in calls and -1 not in calls:
+            arg_len = len(node.args + node.keywords)
+            if arg_len not in calls and -1 not in calls:
                 raise NotSupportedError('Call function with wrong argument count')
-            call = calls[len(node.args)] if len(node.args) in calls else calls[-1]
+            call = calls[arg_len] if arg_len in calls else calls[-1]
             names, func = call
-            params = parse_args(names, node.args, keywords)
-            return func(self, **params)
+            args = parse_args(names, node.args, keywords)
+            return func(self, **args)
         if node.func.id not in self._procs:
             raise NotSupportedError('Call a nonexistent procedure')
         return self._get_proc_block(
