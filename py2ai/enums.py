@@ -45,4 +45,4 @@ class Dimension(AI2Helper):
     FillParent = -2
 
 
-Color = int
+Color = str

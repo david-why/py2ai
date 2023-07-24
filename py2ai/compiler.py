@@ -73,13 +73,6 @@ class ForceLocal:
 
 
 class PythonCompiler(ast.NodeVisitor):
-    """
-    A few out-of-Python things are supported:
-    * Getting properties of annotated components (Attribute)
-    * Setting properties of annotated components (Assign([Attribute]))
-    * Calling methods of annotated components (Call())
-    """
-
     def __init__(self) -> None:
         super().__init__()
         self.project = BlocklyProject()
@@ -129,7 +122,6 @@ class PythonCompiler(ast.NodeVisitor):
 
     def generic_visit(self, node):
         raise NotSupportedError(f'{node.__class__.__name__} is not implemented')
-        return super().generic_visit(node)
 
     def _get_var_block(
         self, name: str, force_global: Optional[bool] = None, eventparam: bool = False
@@ -183,7 +175,7 @@ class PythonCompiler(ast.NodeVisitor):
 
     visit_ImportFrom = visit_Import = visit_Pass = _nothing
 
-    def compile(self, root: ast.Module):
+    def compile(self, root: ast.Module, collapsed: bool = True):
         self._ctx = {}
         self._procs = {}
         self._locals = set()
@@ -193,6 +185,12 @@ class PythonCompiler(ast.NodeVisitor):
         with open(LIB) as f:
             lib = BlocklyProject.from_xml(f.read())
         self.project.extend(lib)
+        if collapsed:
+            y = 0
+            for blk in self.project:
+                blk.y = y
+                blk.collapsed = True
+                y += 52
         return self.project
 
     def _add_component(
@@ -236,9 +234,12 @@ class PythonCompiler(ast.NodeVisitor):
                 schema['Properties']['$Components'].append(copy(comp))
         return schema
 
-    # def create(self, screen_name: str, app_name: str, node: ast.Module):
     def create(
-        self, node: ast.Module, screen_name: str, app_name: Optional[str] = None
+        self,
+        node: ast.Module,
+        screen_name: str,
+        app_name: Optional[str] = None,
+        collapsed: bool = True,
     ):
         self._orig_schema = SCHEMA(screen_name, app_name)
         screen = Screen(
@@ -246,30 +247,18 @@ class PythonCompiler(ast.NodeVisitor):
             json.dumps(self._orig_schema).encode(),
             screen_name,
         )
-        screen.blockly = self.compile(node)
+        screen.blockly = self.compile(node, collapsed=collapsed)
         if self._schema is not None:
             screen.schema = self._schema
         self._add_components(screen.schema)
-        # for comp in ADD_COMPONENTS:
-        #     for exist in screen.schema['Properties'].setdefault('$Components', []):
-        #         if exist['$Name'] == comp['$Name']:
-        #             break
-        #     else:
-        #         screen.schema['Properties']['$Components'].append(copy(comp))
         return screen
 
-    def update(self, screen: Screen, node: ast.Module):
+    def update(self, screen: Screen, node: ast.Module, collapsed: bool = True):
         self._orig_schema = screen.schema
-        screen.blockly = self.compile(node)
+        screen.blockly = self.compile(node, collapsed=collapsed)
         if self._schema is not None:
             screen.schema = self._schema
         self._add_components(screen.schema)
-        # for comp in ADD_COMPONENTS:
-        #     for exist in screen.schema['Properties'].setdefault('$Components', []):
-        #         if exist['$Name'] == comp['$Name']:
-        #             break
-        #     else:
-        #         screen.schema['Properties']['$Components'].append(copy(comp))
         return screen
 
     def visit_Module(self, node):
@@ -380,10 +369,25 @@ class PythonCompiler(ast.NodeVisitor):
 
     def visit_Expr(self, node):
         val = self.visit(node.value)
-        if val.type not in ['component_event', 'component_method']:
+        if val is None:
+            return
+        assert isinstance(val, Block)
+        if val.type == 'component_method':
+            mutations = val.mutations
+            assert mutations is not None
+            comp_type = mutations['component_type']
+            comp_cls = getattr(components, comp_type)
+            method_name = mutations['method_name']
+            method = getattr(comp_cls, method_name)
+            return_type = method.__annotations__['return']
+            wrap = return_type is not None
+        elif val.type == 'component_event':
+            wrap = False
+        else:
+            wrap = True
+        if wrap:
             return Block('controls_eval_but_ignore', values={'VALUE': val})
         return val
-        return self.visit(node.value)
 
     def visit_Name(self, node):
         annot = self._get_annot(node.id)
@@ -942,6 +946,10 @@ class PythonCompiler(ast.NodeVisitor):
                         '__py2ai__bool__', ['x'], [self.visit(node.operand)]
                     )
                 },
+            )
+        if isinstance(node.op, ast.USub):
+            return self.visit(
+                ast.BinOp(left=ast.Constant(value=0), op=ast.Sub(), right=node.operand)
             )
         raise NotSupportedError(
             f'UnaryOp unsupported operator {node.op.__class__.__name__}'

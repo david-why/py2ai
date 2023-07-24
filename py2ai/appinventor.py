@@ -1,5 +1,13 @@
+import base64
+import io
+import json
+import os
+import struct
+from argparse import ArgumentParser
+from typing import Optional
+
 from requests import Session
-import json, base64, struct, io
+
 from py2ai.aia import AIAProject
 
 GET_PROJECTS_REQUEST = '7|0|4|https://ai2.appinventor.mit.edu/ode/|B8929750FF80B64EC8630BFE7CA29E33|com.google.appinventor.shared.rpc.project.ProjectService|getProjectInfos|1|2|3|4|0|'
@@ -14,8 +22,6 @@ def _b64_decode(s):
     while len(s) % 4:
         s = 'A' + s
     return struct.unpack('>q', base64.b64decode(s, altchars=b'$_')[1:])[0]
-    r = base64.b64decode(s, altchars=b'$_')
-    return struct.unpack('l', r[::-1][:-1])[0]
 
 
 def _b64_encode(n):
@@ -24,8 +30,6 @@ def _b64_encode(n):
         .decode()
         .lstrip('A')
     )
-    r = base64.b64encode(r, altchars=b'$_').decode()
-    return r.lstrip('A')
 
 
 class AppInventor:
@@ -103,7 +107,6 @@ class AppInventor:
         buf = io.BytesIO()
         project.save(buf)
         buf.seek(0)
-        open('test.out', 'wb').write(buf.getvalue())
         r = self.session.post(
             f'https://ai2.appinventor.mit.edu/ode/upload/project/{name}',
             files={
@@ -162,3 +165,79 @@ class AppInventor:
             },
         )
         r.raise_for_status()
+
+
+if __name__ == '__main__':
+    ap = ArgumentParser(description='authenticate and manage projects on app inventor')
+    ap.add_argument(
+        '-S',
+        '--session',
+        help='session storage file, default "./.ai_session"',
+        default='.ai_session',
+    )
+
+    sp = ap.add_subparsers(
+        metavar='SUBCOMMAND', help='subcommand to execute', required=True
+    )
+
+    auth = sp.add_parser('auth', help='log in with your cookie')
+    auth.set_defaults(cmd='auth')
+    auth.add_argument('cookie', help='the AppInventor cookie')
+
+    ls = sp.add_parser('ls', help='list your projects')
+    ls.set_defaults(cmd='ls')
+
+    download = sp.add_parser('download', help='download a project')
+    download.set_defaults(cmd='download')
+    download.add_argument('id', help='project id to download', type=int)
+    download.add_argument('file', help='file to save .aia project')
+
+    upload = sp.add_parser('upload', help='upload a project')
+    upload.set_defaults(cmd='upload')
+    upload.add_argument('file', help='.aia project to upload')
+    upload.add_argument('--name', '-n', help='project name, defaults to file name')
+    upload.add_argument(
+        '--autoload',
+        '-a',
+        help='autoload the project in app inventor',
+        action='store_true',
+    )
+
+    args = ap.parse_args()
+
+    session: str = args.session
+    if os.path.exists(session):
+        with open(session) as f:
+            data = json.load(f)
+    else:
+        data = {}
+    if args.cmd == 'auth':
+        cookie: str = args.cookie
+        data['appinventor'] = cookie
+    elif args.cmd == 'ls':
+        ai = AppInventor(data['appinventor'])
+        projects = ai.get_projects()
+        print('Project count:', len(projects))
+        for project in projects:
+            name = project['name']
+            id = project['id']
+            print(f'* {name} ({id})')
+    elif args.cmd == 'download':
+        id: int = args.id
+        file: str = args.file
+        ai = AppInventor(data['appinventor'])
+        project = ai.download_project(id)
+        project.save(file)
+    elif args.cmd == 'upload':
+        file: str = args.file
+        name: Optional[str] = args.name
+        autoload: bool = args.autoload
+        ai = AppInventor(data['appinventor'])
+        if name is None:
+            name = os.path.splitext(file)[0]
+        project = AIAProject(file)
+        ai_project = ai.upload_project(project, name)
+        if autoload:
+            ai.set_autoload_project(ai_project['id'])
+    with open(session, 'w') as f:
+        json.dump(data, f)

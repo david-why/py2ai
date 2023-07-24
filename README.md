@@ -21,9 +21,10 @@ options:
 ```
 
 ## Usage
-The Python program below creates a counter with a button that increases the counter by 1.
+The Python program below creates a counter with a button that updates the label and a button that closes the application.
 
 ```python
+import random
 from py2ai.components import *
 from py2ai.magic import *
 
@@ -31,18 +32,24 @@ from py2ai.magic import *
 Screen1 = Form(BigDefaultText=True)  # Screens are called Forms in code
 Label1 = Label(FontBold=True, Text='0')  # These are builder properties
 Button1 = Button(Text='Click me!')
+Button2 = Button(Text="Don't click me!")
 
 # This compiles into a "procedure with returns" block
 def onclick():
     # This compiles into a "initialize local in ..." block
     text = Label1.Text  # This compiles into a "get Label1.Text" block
     # This compiles into a lot of blocks
-    text = str(int(text) + 1)
+    text = text + str(random.randrange(10))
     # This compiles into a "set Label1.Text to (get variable 'text')" block
     Label1.Text = text
 
+def onclose():
+    # This compiles into a "close application" block
+    raise CloseApplication
+
 # This compiles into a "on Button1.Click" block
 Button1.on_Click(onclick)
+Button2.on_Click(onclose)
 ```
 
 The code is not directly executable, but you can compile it with this library (or the command line tool) to generate an .aia project.

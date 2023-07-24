@@ -69,6 +69,7 @@ class Block:
         fields: Optional[Dict[str, str]] = None,
         values: Optional[Dict[str, 'Block']] = None,
         statements: Optional[Dict[str, 'Block']] = None,
+        collapsed: bool = False,
         next: Optional['Block'] = None,
     ) -> None:
         self.type = type
@@ -81,6 +82,7 @@ class Block:
         self.fields = fields or {}
         self.values = values or {}
         self.statements = statements or {}
+        self.collapsed = collapsed
         self.next = next
         self.id = id
         if id is None:
@@ -88,7 +90,12 @@ class Block:
             type_(self).NEXT_ID += 1
 
     def _to_xml(self):
-        block = E('block', type=self.type, id=self.id, x=str(self.x), y=str(self.y))
+        kws = {}
+        if self.collapsed:
+            kws['collapsed'] = 'true'
+        block = E(
+            'block', type=self.type, id=self.id, x=str(self.x), y=str(self.y), **kws
+        )
         if (
             self.mutations is not None
             or self.mutation_args is not None
@@ -141,6 +148,8 @@ class Block:
             'y': int(xml.get('y', 0)),
             'id': xml.get('id'),
         }
+        if xml.get('collapsed') == 'true':
+            kwargs['collapsed'] = True
         for child in xml:
             if child.tag.endswith('mutation'):
                 kwargs['mutations'] = dict(child.items())
@@ -149,6 +158,10 @@ class Block:
                         kwargs.setdefault('mutation_args', []).append(c.get('name'))
                     elif c.tag.endswith('localname'):
                         kwargs.setdefault('mutation_localnames', []).append(
+                            c.get('name')
+                        )
+                    elif c.tag.endswith('eventparam'):
+                        kwargs.setdefault('mutation_eventparams', []).append(
                             c.get('name')
                         )
             elif child.tag.endswith('field'):
