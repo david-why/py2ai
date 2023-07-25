@@ -1,5 +1,6 @@
 import ast
 import builtins
+import os
 import random as _random
 import string
 from typing import Callable, Dict, List, Literal, Optional, Tuple, Union
@@ -321,13 +322,21 @@ def web_delete(comp, **kwargs):
 
 @_register(['text'])
 def obfs_text(comp, text):
-    if not isinstance(text, ast.Constant) or not isinstance(text.value, builtins.str):
+    blk = comp._visit(text)
+    if blk.type != 'text':
         raise ValueError('obfs_text argument must be a literal string')
     return Block(
         'obfuscated_text',
         mutations={'confounder': ''.join(_random.choices(string.ascii_lowercase, k=8))},
-        fields={'TEXT': text.value},
+        fields={'TEXT': blk.fields['TEXT']},
     )
+
+
+@_register(['name'])
+def get_compile_env(comp, name):
+    if not isinstance(name, ast.Constant) or not isinstance(name.value, builtins.str):
+        raise ValueError('get_compile_env argument must be a literal string')
+    return comp._visit(ast.Constant(value=os.environ[name.value]))
 
 
 @_aregister('random')
