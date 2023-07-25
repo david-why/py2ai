@@ -53,3 +53,56 @@ Button2.on_Click(onclose)
 ```
 
 The code is not directly executable, but you can compile it with this library (or the command line tool) to generate an .aia project.
+
+## Supported Python statements
+* Constants (`123.45`, `[1, 2, 3]`, `{4: 5}`, `'string'`, `None`)
+* Variables, both global and local
+* `global var_name`
+* `+`, `-`, `*`, `/`, `//`
+* `+=`, `-=`, `*=`, `/=`, `//=`
+* `==`, `!=`, `<`, `<=`, `>`, `>=`
+* `and`, `or`
+* `in`
+* `__getitem__`
+  * `{1: 2}[1]`
+  * `[0, 1, 2][1]`
+  * `[0, 1, 2][0:1]`
+* `__setitem__`
+  * `some_dict[1] = 2`
+  * `some_list[2] = 3`
+* Functions (procedures)
+  * `def some_func(arg): return arg + 1`
+* Component creation
+  * `Button1 = Button(Text='Hello World')`
+  * `Button1 = CreateComponent(Button, Text='Hello World')`
+* Component retrieval (component defined elsewhere)
+  * `Button1: Button = GetComponent`
+* Component properties
+  * `text = Button1.Text`
+  * `Button1.Text = 'Hello there'`
+* Component methods
+  * `Notifier1.ShowAlert('Hello World')`
+* Component events
+  * `Button1.on_Click(some_func)`
+* Explicit schema override
+  * `__py2ai__schema__ = {"Source": "Form", "Properties": {...}, ...}`
+* Close screen/application
+  * `raise CloseScreen`
+  * `raise CloseApplication`
+* `if`/`elif`/`else` statements
+* `for` statements
+  * Special-cased `for var in range(...)`
+* `break`
+* Selected methods (see below)
+* Selected functions (see below)
+
+## Supported methods
+* `list`
+  * `list.append(value)`
+  * `list.pop(index)`
+
+## Supported functions
+* Builtin: `int`, `str`, `len`, `range`, `min`, `max`
+* Extended: `web_get`, `web_post`, `web_delete`, `obfs_text`
+* `random`: `random`, `randrange`, `randint`, `choice`
+* `json`: `dumps`, `loads`
