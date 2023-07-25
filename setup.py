@@ -7,5 +7,5 @@ setup(
     author='david-why',
     packages=['py2ai'],
     package_data={'py2ai': ['lib.xml', '*.pyi']},
-    install_requires=[]
+    install_requires=['python-dotenv'],
 )

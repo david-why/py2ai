@@ -1,5 +1,6 @@
 import ast
 import json
+import os
 import random
 from copy import deepcopy as copy
 from functools import partial
@@ -57,13 +58,16 @@ def _find_comp(root: dict, name: str) -> Optional[dict]:
             return found
 
 
-def _literal_eval(node, names={}) -> Any:
+def _literal_eval(node, names=None) -> Any:
     """
     An adaptation of ast.literal_eval that handles Name nodes as well.
     :param node: The node to eval.
     :param names: A dictionary mapping variable names to values. These
     variables can be used in the node.
     """
+    if names is None:
+        names = os.environ
+    # print(names)
     if isinstance(node, str):
         node = ast.parse(node.lstrip(" \t"), mode='eval')
     if isinstance(node, ast.Expression):
@@ -171,6 +175,8 @@ class PythonCompiler(ast.NodeVisitor):
         """The set of variables declared "local\""""
         self._global_assigns: Dict[str, Block] = {}
         """The initial global variable assignments"""
+        self._ctx: Dict[str, Any] = {}
+        """Context used by some calls"""
 
     @property
     def _global(self):
@@ -319,6 +325,7 @@ class PythonCompiler(ast.NodeVisitor):
         :param collapsed: Whether to collapse all blocks after compiling.
         :return: The compiled BlocklyProject.
         """
+        self._ctx = {}
         self._procs = {}
         self._locals = set()
         self._global_assigns = {}
@@ -334,6 +341,46 @@ class PythonCompiler(ast.NodeVisitor):
                 blk.collapsed = True
                 y += 52
         return self.project
+
+    def _add_component(
+        self,
+        type: str,
+        name: str,
+        parent: Optional[str] = None,
+        version: Optional[Union[str, int]] = None,
+        **kwargs: Any,
+    ) -> None:
+        """
+        Adds a component to the schema.
+        :param type: The type of the component.
+        :param name: The name of the component.
+        :param parent: The name of the component's parent, or None.
+        :param version: The version of the component, or None.
+        :param kwargs: Any properties of the component.
+        """
+        if self._orig_schema is None:
+            scn = app = 'Screen1'
+        else:
+            scn = self._orig_schema['Properties']['$Name']
+            app = self._orig_schema['Properties']['AppName']
+        if self._schema is None:
+            self._schema = SCHEMA(scn, app)
+        if parent:
+            par = _find_comp(self._schema['Properties'], parent)
+            if par is None:
+                raise ValueError(f'Component {parent} not found')
+        else:
+            par = self._schema['Properties']
+        comp = kwargs
+        comp.update(
+            {
+                '$Name': name,
+                '$Type': type,
+                '$Version': version or VERSIONS[type],
+                'Uuid': str(random.randint(-2147483648, 2147483647)),
+            }
+        )
+        par.setdefault('$Components', []).append(comp)
 
     def _add_components(self, schema: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -376,7 +423,9 @@ class PythonCompiler(ast.NodeVisitor):
         self._add_components(screen.schema)
         return screen
 
-    def update(self, screen: Screen, node: ast.Module, collapsed: bool = True) -> Screen:
+    def update(
+        self, screen: Screen, node: ast.Module, collapsed: bool = True
+    ) -> Screen:
         """
         Updates a screen with a Python module.
         :param screen: The screen to modify.

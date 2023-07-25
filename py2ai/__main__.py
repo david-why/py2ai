@@ -6,8 +6,12 @@ import string
 from argparse import ArgumentParser
 from typing import Any, Dict, List, Optional, Tuple
 
+import dotenv
+
 from py2ai.aia import AIAProject
 from py2ai.compiler import PythonCompiler
+
+dotenv.load_dotenv('.env')
 
 ap = ArgumentParser(
     prog='py2ai', description='compile and modify .aia projects with Python code'
