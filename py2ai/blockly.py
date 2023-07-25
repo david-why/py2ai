@@ -9,7 +9,13 @@ type_ = type
 
 
 class BlocklyProject(MutableSequence['Block']):
+    """Represents a Blockly project, or a list of Blocks."""
+
     def __init__(self, blocks: Optional[List['Block']] = None) -> None:
+        """
+        Create a BlocklyProject.
+        :param blocks: The initial list of blocks.
+        """
         self.blocks = blocks or []
 
     def __getitem__(self, index: int) -> 'Block':
@@ -35,6 +41,11 @@ class BlocklyProject(MutableSequence['Block']):
         return root
 
     def to_xml(self) -> str:
+        """
+        Returns the XML representation of the project. This is the format of the .bky
+        files.
+        :return: The XML representation.
+        """
         return ET.tostring(self._to_xml()).replace(b'\n', b'&#10;').decode()
 
     @classmethod
@@ -47,6 +58,11 @@ class BlocklyProject(MutableSequence['Block']):
 
     @classmethod
     def from_xml(cls, xml: str) -> 'BlocklyProject':
+        """
+        Create a BlocklyProject from the XML format, or the .bky file.
+        :param xml: The XML string.
+        :return: A created BlocklyProject.
+        """
         if not xml:
             return cls()
         root = ET.fromstring(xml)
@@ -54,6 +70,8 @@ class BlocklyProject(MutableSequence['Block']):
 
 
 class Block:
+    """Represents a Blockly block."""
+
     NEXT_ID = 1
 
     def __init__(
@@ -72,6 +90,26 @@ class Block:
         collapsed: bool = False,
         next: Optional['Block'] = None,
     ) -> None:
+        """
+        Create a Block.
+        :param type: The type of the block.
+        :param x: The x-coordinates of the block.
+        :param y: The y-coordinates of the block.
+        :param id: The ID of the block. This will be generated if not given.
+        :param mutations: The mutations on the block. These are the attributes on the
+        "mutation" XML tag.
+        :param mutation_args: The "name" attribute of "arg" tags within the "mutation"
+        tag.
+        :param mutation_localnames: The "name" attribute of "localname" tags within the
+        "mutation" tag.
+        :param mutation_eventparams: The "name" attribute of "eventparam" tags within
+        the "mutation" tag.
+        :param fields: A mapping of field names to values.
+        :param values: A mapping of value names to values.
+        :param statements: A mapping of statement names to values.
+        :param collapsed: Whether this block is collapsed.
+        :param next: The chained next block.
+        """
         self.type = type
         self.x = x
         self.y = y
@@ -131,9 +169,20 @@ class Block:
         return block
 
     def to_xml(self) -> str:
+        """
+        Returns the XML representation of the block.
+        :return: The XML representation.
+        """
         return ET.tostring(self._to_xml()).replace(b'\n', b'&#10;').decode()
 
     def chain(self, block: 'Block') -> 'Block':
+        """
+        Chains a block at the end of this block's chain. This means that the block will
+        be added right after this block if there is no next block set, otherwise it will
+        recurse down the next blocks until it reaches the end.
+        :param block: The block to chain.
+        :return: `self`
+        """
         cur = self
         while cur.next is not None:
             cur = cur.next
@@ -180,4 +229,9 @@ class Block:
 
     @classmethod
     def from_xml(cls, xml: str) -> 'Block':
+        """
+        Create a BlocklyProject from the XML format.
+        :param xml: The XML string.
+        :return: A created Block.
+        """
         return cls._from_xml(ET.fromstring(xml))

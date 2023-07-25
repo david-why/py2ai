@@ -4,7 +4,7 @@ import json
 import os
 import struct
 from argparse import ArgumentParser
-from typing import Optional
+from typing import Any, Dict, Optional
 
 from requests import Session
 
@@ -33,11 +33,31 @@ def _b64_encode(n):
 
 
 class AppInventor:
+    """Handles communication with the App Inventor server (ai2.appinventor.mit.edu)."""
+
     def __init__(self, cookie: str):
+        """
+        Create an AppInventor object.
+        :param cookie: The "AppInventor" cookie.
+        """
         self.session = Session()
-        self.session.cookies['AppInventor'] = cookie
+        self.cookie = cookie
+
+    @property
+    def cookie(self) -> str:
+        """The AppInventor cookie"""
+        return self.session.cookies['AppInventor']
+
+    @cookie.setter
+    def cookie(self, value: str) -> None:
+        self.session.cookies['AppInventor'] = value
 
     def get_projects(self):
+        """
+        Retrieves a list of projects in this account.
+        :return: A list of dictionaries of the form
+        `{"id": 12345, "name": "ProjectName"}` that describe the projects.
+        """
         r = self.session.post(
             'https://ai2.appinventor.mit.edu/ode/projects',
             data=GET_PROJECTS_REQUEST,
@@ -61,7 +81,12 @@ class AppInventor:
             projects.append({'id': id, 'name': name})
         return projects
 
-    def download_project(self, id: int):
+    def download_project(self, id: int) -> AIAProject:
+        """
+        Downloads a given project.
+        :param id: The ID of the project.
+        :return: The downloaded and loaded AIAProject.
+        """
         if isinstance(id, dict):
             id = id['id']
         r = self.session.get(
@@ -71,7 +96,11 @@ class AppInventor:
         buf = io.BytesIO(r.content)
         return AIAProject(buf)
 
-    def move_to_trash(self, id: int):
+    def move_to_trash(self, id: int) -> None:
+        """
+        Move a given project to trash.
+        :param id: The ID of the project.
+        """
         if isinstance(id, dict):
             id = id['id']
         r = self.session.post(
@@ -84,7 +113,11 @@ class AppInventor:
         )
         r.raise_for_status()
 
-    def delete_from_trash(self, id: int):
+    def delete_from_trash(self, id: int) -> None:
+        """
+        Deletes a project from the trash.
+        :param id: The ID of the project.
+        """
         if isinstance(id, dict):
             id = id['id']
         r = self.session.post(
@@ -97,7 +130,14 @@ class AppInventor:
         )
         r.raise_for_status()
 
-    def upload_project(self, project: AIAProject, name: str):
+    def upload_project(self, project: AIAProject, name: str) -> Dict[str, Any]:
+        """
+        Upload a project to the App Inventor server.
+        :param project: The project to upload.
+        :param name: The name of the project.
+        :return: A dictionary of the form `{"id": 12345, "name": "ProjectName"}` that
+        describes the created project.
+        """
         ai_projects = self.get_projects()
         for ai_project in ai_projects:
             if ai_project['name'] == name:
@@ -129,7 +169,12 @@ class AppInventor:
         ai_name = parts[4]
         return {'id': ai_id, 'name': ai_name}
 
-    def set_autoload_project(self, id: int):
+    def set_autoload_project(self, id: int) -> None:
+        """
+        Sets a given project to load automatically when the user opens App Inventor in
+        their browser.
+        :param id: The ID of the project.
+        """
         if isinstance(id, dict):
             id = id['id']
         settings = self.get_user_settings()
@@ -138,6 +183,10 @@ class AppInventor:
         self.store_user_settings(settings)
 
     def get_user_settings(self):
+        """
+        Fetches the user settings.
+        :return: The user settings dict.
+        """
         r = self.session.post(
             'https://ai2.appinventor.mit.edu/ode/userinfo',
             data=LOAD_USER_SETTINGS_REQUEST,
@@ -153,7 +202,11 @@ class AppInventor:
         data = json.loads(resp[4:])[::-1]
         return json.loads(data[2][0])
 
-    def store_user_settings(self, settings: dict):
+    def store_user_settings(self, settings: dict) -> None:
+        """
+        Stores the user settings.
+        :param settings: The user settings dict.
+        """
         data = json.dumps(settings, ensure_ascii=True)
         data = data.replace('\\', '\\\\').replace('|', '\\|')
         r = self.session.post(

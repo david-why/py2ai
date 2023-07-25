@@ -1,13 +1,11 @@
 import ast
-from typing import TYPE_CHECKING, Callable, Dict, List, Literal, Optional, Tuple, Union
-import random as _random, string
 import builtins
+import random as _random
+import string
+from typing import Callable, Dict, List, Literal, Optional, Tuple, Union
+
 from .blockly import Block
 
-if TYPE_CHECKING:
-    from .compiler import PythonCompiler
-
-# Call = Callable[['PythonCompiler', List[ast.expr]], Block]
 Func = Callable[..., Block]
 Call = Tuple[List[str], Func]
 

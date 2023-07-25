@@ -2,9 +2,9 @@ import ast
 import json
 import random
 from copy import deepcopy as copy
-from inspect import getfullargspec, signature
+from functools import partial
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Type, Union, cast
+from typing import Any, Dict, List, Optional, Set, Tuple, Type, Union, cast
 
 from py2ai import components, enums
 from py2ai.aia import Screen
@@ -21,6 +21,12 @@ ADD_COMPONENTS = [
 
 
 def SCHEMA(name: str, appname: Optional[str] = None):
+    """
+    Generates a default schema for a screen.
+    :param name: The name of the screen.
+    :param appname: The name of the app. Only useful for the main screen.
+    :return: The schema.
+    """
     return {
         'authURL': ['ai2.appinventor.mit.edu'],
         'YaVersion': '223',
@@ -37,6 +43,12 @@ def SCHEMA(name: str, appname: Optional[str] = None):
 
 
 def _find_comp(root: dict, name: str) -> Optional[dict]:
+    """
+    Find a component in the schema by its name.
+    :param root: The component to search in.
+    :param name: The name of the component to search for.
+    :return: The found component or None.
+    """
     if root.get('$Name') == name:
         return root
     for comp in root.get('$Components', []):
@@ -45,7 +57,62 @@ def _find_comp(root: dict, name: str) -> Optional[dict]:
             return found
 
 
-def parse_args(names: List[str], args: list, kwargs: dict):
+def _literal_eval(node, names={}) -> Any:
+    """
+    An adaptation of ast.literal_eval that handles Name nodes as well.
+    :param node: The node to eval.
+    :param names: A dictionary mapping variable names to values. These
+    variables can be used in the node.
+    """
+    if isinstance(node, str):
+        node = ast.parse(node.lstrip(" \t"), mode='eval')
+    if isinstance(node, ast.Expression):
+        node = node.body
+    literal_eval = partial(_literal_eval, names=names)
+    if isinstance(node, ast.Constant):
+        return node.value
+    elif isinstance(node, ast.Tuple):
+        return tuple(map(literal_eval, node.elts))
+    elif isinstance(node, ast.List):
+        return list(map(literal_eval, node.elts))
+    elif isinstance(node, ast.Set):
+        return set(map(literal_eval, node.elts))
+    elif (
+        isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Name)
+        and node.func.id == 'set'
+        and node.args == node.keywords == []
+    ):
+        return set()
+    elif isinstance(node, ast.Dict):
+        if None in node.keys or len(node.keys) != len(node.values):
+            raise NotSupportedError
+        return dict(zip(map(literal_eval, node.keys), map(literal_eval, node.values)))
+    elif isinstance(node, ast.BinOp) and isinstance(node.op, (ast.Add, ast.Sub)):
+        left = literal_eval(node.left)
+        right = literal_eval(node.right)
+        if isinstance(node.op, ast.Add):
+            return left + right
+        else:
+            return left - right
+    elif isinstance(node, ast.UnaryOp) and isinstance(node.op, (ast.UAdd, ast.USub)):
+        num = literal_eval(node.operand)
+        if isinstance(node.op, ast.UAdd):
+            return +num
+        else:
+            return -num
+    elif isinstance(node, ast.Name):
+        return names[node.id]
+
+
+def parse_args(names: List[str], args: list, kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Parse the args and kwargs to a function given the argument names.
+    :param names: The argument names of the function.
+    :param args: The arguments given.
+    :param kwargs: The keywords given.
+    :return: The parsed keywords to pass to the function.
+    """
     parsed = {names[i]: args[i] for i in range(len(args))}
     for k, v in kwargs.items():
         if k in parsed:
@@ -57,10 +124,12 @@ def parse_args(names: List[str], args: list, kwargs: dict):
 
 
 class NotSupportedError(Exception):
-    pass
+    """Python code not supported in compilation"""
 
 
 class ForceLocal:
+    """Force some variables to be seen as local in a scope"""
+
     def __init__(self, compiler: 'PythonCompiler', *names: str):
         self.compiler = compiler
         self.names = names
@@ -73,39 +142,76 @@ class ForceLocal:
 
 
 class PythonCompiler(ast.NodeVisitor):
+    """
+    Compile Python code into AppInventor Blockly XML.
+    This works by parsing the Python code with `ast` then looking at each
+    node recusrively.
+    """
+
     def __init__(self) -> None:
         super().__init__()
         self.project = BlocklyProject()
         self._orig_schema = None
+        """The original schema of the screen"""
         self._schema = None
+        """The current schema of the screen"""
         self._state: List[ast.AST] = []
+        """The stack of AST nodes before the node being processed"""
         self._scopes: List[Set[str]] = []
+        """The set of variables in the scope (function) stack"""
         self._comps: List[Dict[str, Type[Component]]] = []
+        """The component definitions in the scope stack"""
         self._annots: List[Dict[str, type]] = []
+        """The component annotations in the scope stack"""
         self._procs: Dict[str, List[str]] = {}
+        """The defined procedures and their argument lists"""
         self._globals: List[Set[str]] = []
+        """The set of variables declared "global" in the scope stack"""
         self._locals: Set[str] = set()
-        self._ctx: dict = {}
+        """The set of variables declared "local\""""
         self._global_assigns: Dict[str, Block] = {}
+        """The initial global variable assignments"""
 
     @property
     def _global(self):
+        """Whether we are currently in the global namespace (outside of functions)"""
         return len(self._scopes) <= 1
 
     def _local(self, *names: str):
+        """Returns a context manager that forces the given variables to be local"""
         return ForceLocal(self, *names)
 
-    def visit(self, node):
+    def visit(self, node) -> Optional[Block]:
+        """
+        Look at a node and maybe compile it into a block.
+        :param node: The node to compile.
+        :return: A compiled Block or None.
+        """
         self._state.append(node)
         ret = super().visit(node)
         self._state.pop()
         return ret
 
-    def visit_nodes(self, nodes: list):
+    def _visit(self, node) -> Block:
+        """
+        Like visit, but checks that the return value is not None.
+        :param node: The node to compile.
+        :return: A compiled Block.
+        """
+        blk = self.visit(node)
+        assert blk is not None
+        return blk
+
+    def visit_nodes(self, nodes: list) -> Optional[Block]:
+        """
+        Look at a list of nodes, useful for function compilation.
+        Returns a single block with the rest of the blocks chained.
+        :param nodes: The nodes to compile.
+        :return: A compiled block, chained with next blocks, or None.
+        """
         blocks = []
         for item in nodes:
             blk = self.visit(item)
-            # print(blk)
             if blk is not None:
                 blocks.append(blk)
         if not blocks:
@@ -121,11 +227,20 @@ class PythonCompiler(ast.NodeVisitor):
             return first
 
     def generic_visit(self, node):
+        """Raise an error for unknown nodes"""
         raise NotSupportedError(f'{node.__class__.__name__} is not implemented')
 
     def _get_var_block(
         self, name: str, force_global: Optional[bool] = None, eventparam: bool = False
-    ):
+    ) -> Block:
+        """
+        Returns a "get variable" block.
+        :param name: The name of the variable, excluding the "global " part.
+        :param force_global: Override the variable to be global or local. None means
+        use current scope.
+        :param eventparam: Whether the variable is an event parameter.
+        :return: A "get variable" Block.
+        """
         if force_global is None:
             force_global = self._global and name not in self._locals
         return Block(
@@ -136,7 +251,15 @@ class PythonCompiler(ast.NodeVisitor):
 
     def _set_var_block(
         self, name: str, value: Block, force_global: Optional[bool] = None
-    ):
+    ) -> Block:
+        """
+        Returns a "set variable" block.
+        :param name: The name of the variable, excluding the "global " part.
+        :param value: The Block returning the value to set.
+        :param force_global: Override the variable to be global or local. None means
+        use current scope.
+        :return: A "set variable" Block.
+        """
         if force_global is None:
             force_global = self._global and name not in self._locals
         return Block(
@@ -146,9 +269,17 @@ class PythonCompiler(ast.NodeVisitor):
         )
 
     def _get_null_block(self):
+        """Returns a "get variable __py2ai__null__" block."""
         return self._get_var_block('__py2ai__null__', True)
 
-    def _get_proc_block(self, proc: str, args: List[str], values: List[Block]):
+    def _get_proc_block(self, proc: str, args: List[str], values: List[Block]) -> Block:
+        """
+        Returns a "call procedure with return" block.
+        :param proc: The name of the procedure.
+        :param args: A list of the procedure arguments.
+        :param values: A list of the values to the procedure arguments.
+        :return: A "call procedure with return" Block.
+        """
         return Block(
             'procedures_callreturn',
             mutations={'name': proc},
@@ -157,7 +288,12 @@ class PythonCompiler(ast.NodeVisitor):
             values={f'ARG{i}': a for i, a in enumerate(values)},
         )
 
-    def _get_annot(self, var: str):
+    def _get_annot(self, var: str) -> Optional[Tuple[str, type]]:
+        """
+        Gets the annotation on a Python variable.
+        :param var: The name of the Python variable.
+        :return: A tuple (type of annotation, annotated class) or None.
+        """
         for i in range(len(self._scopes) - 1, -1, -1):
             if var in self._comps[i]:
                 return ('comp', self._comps[i][var])
@@ -167,16 +303,22 @@ class PythonCompiler(ast.NodeVisitor):
                 return
 
     def _if_ret(self) -> Block:
+        """Returns a block that breaks if __py2ai__funcret__ == 2."""
         with self._local('__py2ai__funcret__'):
-            return self.visit(ast.parse('if __py2ai__funcret__ == 2: break').body[0])
+            return self._visit(ast.parse('if __py2ai__funcret__ == 2: break').body[0])
 
-    def _nothing(self, node):
-        return
+    def _nothing(self, node) -> None:
+        """Do nothing."""
 
     visit_ImportFrom = visit_Import = visit_Pass = _nothing
 
-    def compile(self, root: ast.Module, collapsed: bool = True):
-        self._ctx = {}
+    def compile(self, root: ast.Module, collapsed: bool = True) -> BlocklyProject:
+        """
+        Compiles the module into Blockly.
+        :param root: The root node in the module, returned by ast.parse.
+        :param collapsed: Whether to collapse all blocks after compiling.
+        :return: The compiled BlocklyProject.
+        """
         self._procs = {}
         self._locals = set()
         self._global_assigns = {}
@@ -193,39 +335,12 @@ class PythonCompiler(ast.NodeVisitor):
                 y += 52
         return self.project
 
-    def _add_component(
-        self,
-        type: str,
-        name: str,
-        parent: Optional[str] = None,
-        version: Optional[Union[str, int]] = None,
-        **kwargs: Any,
-    ):
-        if self._orig_schema is None:
-            scn = app = 'Screen1'
-        else:
-            scn = self._orig_schema['Properties']['$Name']
-            app = self._orig_schema['Properties']['AppName']
-        if self._schema is None:
-            self._schema = SCHEMA(scn, app)
-        if parent:
-            par = _find_comp(self._schema['Properties'], parent)
-            if par is None:
-                raise ValueError(f'Component {parent} not found')
-        else:
-            par = self._schema['Properties']
-        comp = kwargs
-        comp.update(
-            {
-                '$Name': name,
-                '$Type': type,
-                '$Version': version or VERSIONS[type],
-                'Uuid': str(random.randint(-2147483648, 2147483647)),
-            }
-        )
-        par.setdefault('$Components', []).append(comp)
-
-    def _add_components(self, schema: dict):
+    def _add_components(self, schema: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Add the required components to a schema, if they don't exist already.
+        :param schema: The schema to modify.
+        :return: The same schema, modified in place.
+        """
         for comp in ADD_COMPONENTS:
             for exist in schema['Properties'].setdefault('$Components', []):
                 if exist['$Name'] == comp['$Name']:
@@ -240,7 +355,15 @@ class PythonCompiler(ast.NodeVisitor):
         screen_name: str,
         app_name: Optional[str] = None,
         collapsed: bool = True,
-    ):
+    ) -> Screen:
+        """
+        Creates a screen from a Python module.
+        :param node: The Python module node.
+        :param screen_name: The name of the created screen.
+        :param app_name: The name of the app, useful if this is the main screen.
+        :param collapsed: Whether to collapse all blocks after compiling.
+        :return: A newly created Screen.
+        """
         self._orig_schema = SCHEMA(screen_name, app_name)
         screen = Screen(
             BlocklyProject().to_xml().encode(),
@@ -253,7 +376,14 @@ class PythonCompiler(ast.NodeVisitor):
         self._add_components(screen.schema)
         return screen
 
-    def update(self, screen: Screen, node: ast.Module, collapsed: bool = True):
+    def update(self, screen: Screen, node: ast.Module, collapsed: bool = True) -> Screen:
+        """
+        Updates a screen with a Python module.
+        :param screen: The screen to modify.
+        :param node: The Python module node.
+        :param collapsed: Whether to collapse all blocks after compiling.
+        :return: The same screen, with blocks and maybe schema replaced.
+        """
         self._orig_schema = screen.schema
         screen.blockly = self.compile(node, collapsed=collapsed)
         if self._schema is not None:
@@ -261,7 +391,7 @@ class PythonCompiler(ast.NodeVisitor):
         self._add_components(screen.schema)
         return screen
 
-    def visit_Module(self, node):
+    def visit_Module(self, node) -> BlocklyProject:
         self._scopes.append(set())
         self._comps.append({})
         self._annots.append({})
@@ -331,6 +461,9 @@ class PythonCompiler(ast.NodeVisitor):
         self._globals.pop()
         return self.project
 
+    # The following methods would be a pain to document one by one. Basically, they
+    # each handle an AST node type and returns either a Block or None.
+
     def visit_Constant(self, node):
         if isinstance(node.value, bool):
             return Block(
@@ -349,7 +482,7 @@ class PythonCompiler(ast.NodeVisitor):
         return Block(
             'lists_create_with',
             mutations={'items': str(len(node.elts))},
-            values={f'ADD{i}': self.visit(v) for i, v in enumerate(node.elts)},
+            values={f'ADD{i}': self._visit(v) for i, v in enumerate(node.elts)},
         )
 
     def visit_Dict(self, node):
@@ -359,7 +492,7 @@ class PythonCompiler(ast.NodeVisitor):
             if k is None:
                 raise NotSupportedError('Dict **values not supported')
             elts.append(
-                Block('pair', values={'KEY': self.visit(k), 'VALUE': self.visit(v)})
+                Block('pair', values={'KEY': self._visit(k), 'VALUE': self._visit(v)})
             )
         return Block(
             'dictionaries_create_with',
@@ -419,26 +552,33 @@ class PythonCompiler(ast.NodeVisitor):
         elif node.value is not None:
             return self.visit(ast.Assign(targets=[node.target], value=node.value))
         else:
-            raise NotSupportedError('AnnAssign with unparsable annotation and no value')
+            return  # nothing to compile, probably just for coding
         if not isinstance(node.target, ast.Name):
             raise NotSupportedError('AnnAssign target not a variable')
         var = node.target.id
-        if (
+        is_component = (
             hasattr(components, ann)
             and issubclass(getattr(components, ann), Component)
+            and ann != 'Component'
+        )
+        is_component_def = is_component and (
+            node.value is None
+            or isinstance(node.value, ast.Name)
+            and node.value.id in 'GetComponent'
+            or isinstance(node.value, ast.Call)
+            and isinstance(node.value.func, ast.Name)
             and (
-                node.value is None
-                or isinstance(node.value, ast.Name)
-                and node.value.id == 'GetComponent'
+                hasattr(components, node.value.func.id)
+                and issubclass(getattr(components, ann), Component)
+                and node.value.func.id != 'Component'
+                or node.value.func.id == 'CreateComponent'
             )
-        ):
-            # print('set comp', var)
+        )
+        if is_component_def:
             self._comps[-1][var] = getattr(components, ann)
-        elif node.value is not None:
+        elif is_component:
             self._annots[-1][var] = getattr(components, ann)
-        if node.value is not None and not (
-            isinstance(node.value, ast.Name) and node.value.id == 'GetComponent'
-        ):
+        if node.value is not None and not is_component_def:
             return self.visit(ast.Assign(targets=[node.target], value=node.value))
 
     def visit_Assign(self, node):
@@ -453,9 +593,9 @@ class PythonCompiler(ast.NodeVisitor):
                         '__py2ai__set_item__',
                         ['obj', 'key', 'value'],
                         [
-                            self.visit(target.value),
-                            self.visit(target.slice),
-                            self.visit(node.value),
+                            self._visit(target.value),
+                            self._visit(target.slice),
+                            self._visit(node.value),
                         ],
                     )
                 },
@@ -488,7 +628,7 @@ class PythonCompiler(ast.NodeVisitor):
                             },
                             fields={'COMPONENT_SELECTOR': attr_var},
                         ),
-                        'VALUE': self.visit(node.value),
+                        'VALUE': self._visit(node.value),
                     },
                 )
             if (
@@ -507,13 +647,13 @@ class PythonCompiler(ast.NodeVisitor):
                     fields={'PROP': target.attr},
                     values={
                         'COMPONENT': self._get_var_block(attr_var),
-                        'VALUE': self.visit(node.value),
+                        'VALUE': self._visit(node.value),
                     },
                 )
             raise NotSupportedError('Assign to a weirdly annotated object attribute')
         if isinstance(target, ast.Name):
             if target.id == '__py2ai__schema__':
-                self._schema = ast.literal_eval(ast.unparse(node.value))
+                self._schema = _literal_eval(ast.unparse(node.value))
             elif (
                 isinstance(node.value, ast.Call)
                 and isinstance(node.value.func, ast.Name)
@@ -534,7 +674,7 @@ class PythonCompiler(ast.NodeVisitor):
                     self._schema = SCHEMA(scn, app)
                 parent = self._schema['Properties']
                 if typ.id == 'Form':
-                    parent.update({k: str(ast.literal_eval(v)) for k, v in kws.items()})
+                    parent.update({k: str(_literal_eval(v)) for k, v in kws.items()})
                     self.visit(ast.AnnAssign(target=target, annotation=typ, value=None))
                     return
                 if _find_comp(parent, target.id) is not None:
@@ -548,7 +688,7 @@ class PythonCompiler(ast.NodeVisitor):
                     parent = _find_comp(self._schema['Properties'], parent.id)
                     if parent is None:
                         raise NotSupportedError('Assign Component parent not found')
-                kws = {k: str(ast.literal_eval(v)) for k, v in kws.items()}
+                kws = {k: str(_literal_eval(v)) for k, v in kws.items()}
                 kws.update(
                     {
                         '$Name': target.id,
@@ -588,7 +728,7 @@ class PythonCompiler(ast.NodeVisitor):
                     self._schema = SCHEMA(scn, app)
                 parent = self._schema['Properties']
                 if typ.id == 'Form':
-                    parent.update({k: str(ast.literal_eval(v)) for k, v in kws.items()})
+                    parent.update({k: str(_literal_eval(v)) for k, v in kws.items()})
                     self.visit(ast.AnnAssign(target=target, annotation=typ, value=None))
                     return
                 if _find_comp(parent, target.id) is not None:
@@ -606,7 +746,7 @@ class PythonCompiler(ast.NodeVisitor):
                         raise NotSupportedError(
                             'Assign CreateComponent parent not found'
                         )
-                kws = {k: str(ast.literal_eval(v)) for k, v in kws.items()}
+                kws = {k: str(_literal_eval(v)) for k, v in kws.items()}
                 kws.update(
                     {
                         '$Name': target.id,
@@ -622,11 +762,11 @@ class PythonCompiler(ast.NodeVisitor):
                 if target.id not in self._globals[-1]:
                     self._scopes[-1].add(target.id)
                 if self._global:
-                    self._global_assigns[target.id] = self.visit(node.value)
+                    self._global_assigns[target.id] = self._visit(node.value)
                     return
                 return self._set_var_block(
                     target.id,
-                    self.visit(node.value),
+                    self._visit(node.value),
                     True if target.id in self._globals[-1] else None,
                 )
         raise NotSupportedError(f'Assign to {target.__class__.__name__} target')
@@ -646,14 +786,14 @@ class PythonCompiler(ast.NodeVisitor):
                 '__py2ai__get_item_slice__',
                 ['obj', 'start', 'end', 'step'],
                 [
-                    self.visit(node.value),
-                    self.visit(slice.lower)
+                    self._visit(node.value),
+                    self._visit(slice.lower)
                     if slice.lower is not None
                     else self._get_null_block(),
-                    self.visit(slice.upper)
+                    self._visit(slice.upper)
                     if slice.upper is not None
                     else self._get_null_block(),
-                    self.visit(slice.step)
+                    self._visit(slice.step)
                     if slice.step is not None
                     else self._get_null_block(),
                 ],
@@ -661,7 +801,7 @@ class PythonCompiler(ast.NodeVisitor):
         return self._get_proc_block(
             '__py2ai__get_item__',
             ['obj', 'key'],
-            [self.visit(node.value), self.visit(node.slice)],
+            [self._visit(node.value), self._visit(node.slice)],
         )
 
     def visit_Global(self, node):
@@ -723,7 +863,7 @@ class PythonCompiler(ast.NodeVisitor):
         )
         if node.value is not None:
             blk.chain(
-                self._set_var_block('__py2ai__return__', self.visit(node.value), False)
+                self._set_var_block('__py2ai__return__', self._visit(node.value), False)
             )
         return blk.chain(Block('controls_break'))
 
@@ -739,7 +879,7 @@ class PythonCompiler(ast.NodeVisitor):
                     fields={'OPTION': getattr(cls, node.attr).value},
                 )
             elif issubclass(cls, enums.AI2Helper) and cls is not enums.AI2Helper:
-                return self.visit(ast.Constant(value=getattr(cls, node.attr)))
+                return self._visit(ast.Constant(value=getattr(cls, node.attr)))
         var = node.value.id
         annot = self._get_annot(var)
         if annot is None:
@@ -782,6 +922,7 @@ class PythonCompiler(ast.NodeVisitor):
                 fields={'PROP': node.attr},
                 values={'COMPONENT': self._get_var_block(node.value.id)},
             )
+        raise NotSupportedError('Attribute unknown usage')
 
     def visit_Call(self, node):
         # node.args += [k.value for k in node.keywords]
@@ -801,7 +942,7 @@ class PythonCompiler(ast.NodeVisitor):
                 return self._get_proc_block(
                     proc,
                     ['self'] + names,
-                    [self.visit(attr_obj)] + [self.visit(param) for param in args],
+                    [self._visit(attr_obj)] + [self._visit(param) for param in args],
                 )
             if not isinstance(attr_obj, ast.Name):
                 raise NotSupportedError('Call attribute of non-variable')
@@ -918,7 +1059,7 @@ class PythonCompiler(ast.NodeVisitor):
                     'instance_name': attr_obj.id,
                 },
                 fields={'COMPONENT_SELECTOR': attr_obj.id},
-                values={f'ARG{i}': self.visit(a) for i, a in enumerate(node.args)},
+                values={f'ARG{i}': self._visit(a) for i, a in enumerate(node.args)},
             )
         if not isinstance(node.func, ast.Name):
             raise NotSupportedError('Call a weird thing')
@@ -934,7 +1075,7 @@ class PythonCompiler(ast.NodeVisitor):
         if node.func.id not in self._procs:
             raise NotSupportedError('Call a nonexistent procedure')
         return self._get_proc_block(
-            node.func.id, self._procs[node.func.id], [self.visit(a) for a in node.args]
+            node.func.id, self._procs[node.func.id], [self._visit(a) for a in node.args]
         )
 
     def visit_UnaryOp(self, node):
@@ -943,7 +1084,7 @@ class PythonCompiler(ast.NodeVisitor):
                 'logic_negate',
                 values={
                     'BOOL': self._get_proc_block(
-                        '__py2ai__bool__', ['x'], [self.visit(node.operand)]
+                        '__py2ai__bool__', ['x'], [self._visit(node.operand)]
                     )
                 },
             )
@@ -960,37 +1101,37 @@ class PythonCompiler(ast.NodeVisitor):
             return self._get_proc_block(
                 '__py2ai__add__',
                 ['x', 'y'],
-                [self.visit(node.left), self.visit(node.right)],
+                [self._visit(node.left), self._visit(node.right)],
             )
         if isinstance(node.op, ast.Sub):
             return self._get_proc_block(
                 '__py2ai__sub__',
                 ['x', 'y'],
-                [self.visit(node.left), self.visit(node.right)],
+                [self._visit(node.left), self._visit(node.right)],
             )
         if isinstance(node.op, ast.Mult):
             return self._get_proc_block(
                 '__py2ai__mul__',
                 ['x', 'y'],
-                [self.visit(node.left), self.visit(node.right)],
+                [self._visit(node.left), self._visit(node.right)],
             )
         if isinstance(node.op, ast.Div):
             return self._get_proc_block(
                 '__py2ai__truediv__',
                 ['x', 'y'],
-                [self.visit(node.left), self.visit(node.right)],
+                [self._visit(node.left), self._visit(node.right)],
             )
         if isinstance(node.op, ast.FloorDiv):
             return self._get_proc_block(
                 '__py2ai__floordiv__',
                 ['x', 'y'],
-                [self.visit(node.left), self.visit(node.right)],
+                [self._visit(node.left), self._visit(node.right)],
             )
         if isinstance(node.op, ast.Mod):
             return self._get_proc_block(
                 '__py2ai__mod__',
                 ['x', 'y'],
-                [self.visit(node.left), self.visit(node.right)],
+                [self._visit(node.left), self._visit(node.right)],
             )
         raise NotSupportedError(
             f'BinOp unsupported operator {node.op.__class__.__name__}'
@@ -1005,7 +1146,7 @@ class PythonCompiler(ast.NodeVisitor):
             values={
                 (
                     'A' if i == 0 else 'B' if i == 1 else f'BOOL{i}'
-                ): self._get_proc_block('__py2ai__bool__', ['x'], [self.visit(v)])
+                ): self._get_proc_block('__py2ai__bool__', ['x'], [self._visit(v)])
                 for i, v in enumerate(node.values)
             },
         )
@@ -1028,33 +1169,33 @@ class PythonCompiler(ast.NodeVisitor):
         right = node.comparators[0]
         if isinstance(op, ast.Eq):
             return self._get_proc_block(
-                '__py2ai__eq__', ['x', 'y'], [self.visit(left), self.visit(right)]
+                '__py2ai__eq__', ['x', 'y'], [self._visit(left), self._visit(right)]
             )
         if isinstance(op, ast.NotEq):
             return self._get_proc_block(
-                '__py2ai__ne__', ['x', 'y'], [self.visit(left), self.visit(right)]
+                '__py2ai__ne__', ['x', 'y'], [self._visit(left), self._visit(right)]
             )
         if isinstance(op, ast.Lt):
             return self._get_proc_block(
-                '__py2ai__lt__', ['x', 'y'], [self.visit(left), self.visit(right)]
+                '__py2ai__lt__', ['x', 'y'], [self._visit(left), self._visit(right)]
             )
         if isinstance(op, ast.Gt):
             return self._get_proc_block(
-                '__py2ai__gt__', ['x', 'y'], [self.visit(left), self.visit(right)]
+                '__py2ai__gt__', ['x', 'y'], [self._visit(left), self._visit(right)]
             )
         if isinstance(op, ast.LtE):
             return self._get_proc_block(
-                '__py2ai__le__', ['x', 'y'], [self.visit(left), self.visit(right)]
+                '__py2ai__le__', ['x', 'y'], [self._visit(left), self._visit(right)]
             )
         if isinstance(op, ast.GtE):
             return self._get_proc_block(
-                '__py2ai__ge__', ['x', 'y'], [self.visit(left), self.visit(right)]
+                '__py2ai__ge__', ['x', 'y'], [self._visit(left), self._visit(right)]
             )
         if isinstance(op, ast.In):
             return self._get_proc_block(
                 '__py2ai__contains__',
                 ['obj', 'item'],
-                [self.visit(right), self.visit(left)],  # wtf
+                [self._visit(right), self._visit(left)],  # wtf
             )
         raise NotSupportedError(f'Compare operator {op.__class__.__name__}')
 
@@ -1085,7 +1226,7 @@ class PythonCompiler(ast.NodeVisitor):
             mutations={'elseif': str(elifs), 'else': '1' if ifs[-1].orelse else '0'},
             values={
                 f'IF{i}': self._get_proc_block(
-                    '__py2ai__bool__', ['x'], [self.visit(x.test)]
+                    '__py2ai__bool__', ['x'], [self._visit(x.test)]
                 )
                 for i, x in enumerate(ifs)
             },
@@ -1114,20 +1255,20 @@ class PythonCompiler(ast.NodeVisitor):
                 'controls_forRange',
                 fields={'VAR': node.target.id},
                 values={
-                    'START': self.visit(args[0])
+                    'START': self._visit(args[0])
                     if len(args) > 1
                     else Block('math_number', fields={'NUM': '0'}),
                     'END': Block(
                         'math_add',
                         mutations={'items': '2'},
                         values={
-                            'NUM0': self.visit(args[0])
+                            'NUM0': self._visit(args[0])
                             if len(args) == 1
-                            else self.visit(args[1]),
+                            else self._visit(args[1]),
                             'NUM1': Block(
                                 'controls_choose',
                                 values={
-                                    'TEST': self.visit(
+                                    'TEST': self._visit(
                                         ast.Compare(
                                             left=step,
                                             ops=[ast.Lt()],
@@ -1144,7 +1285,7 @@ class PythonCompiler(ast.NodeVisitor):
                             ),
                         },
                     ),
-                    'STEP': self.visit(step),
+                    'STEP': self._visit(step),
                 },
                 statements={'DO': blk} if blk else None,
             ).chain(self._if_ret())
@@ -1155,7 +1296,7 @@ class PythonCompiler(ast.NodeVisitor):
                 fields={'VAR': node.target.id},
                 values={
                     'LIST': self._get_proc_block(
-                        '__py2ai__iter__', ['x'], [self.visit(node.iter)]
+                        '__py2ai__iter__', ['x'], [self._visit(node.iter)]
                     )
                 },
                 statements=blk and {'DO': blk},
