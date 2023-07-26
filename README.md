@@ -84,6 +84,8 @@ The code is not directly executable, but you can compile it with this library (o
   * `Notifier1.ShowAlert('Hello World')`
 * Component events
   * `Button1.on_Click(some_func)`
+* Any Component events
+  * `Button1.on_any_Click(some_func)`
 * Explicit schema override
   * `__py2ai__schema__ = {"Source": "Form", "Properties": {...}, ...}`
 * Close screen/application
