@@ -98,8 +98,16 @@ The code is not directly executable, but you can compile it with this library (o
 
 ## Supported methods
 * `list`
-  * `list.append(value)`
-  * `list.pop(index)`
+  * `list.append(x)`
+  * `list.clear()`
+  * `list.copy()`
+  * `list.count(x)`
+  * `list.extend(x)`
+  * `list.index(x, [start, [stop]])`
+  * `list.insert(i, x)`
+  * `list.pop(x)`
+  * `list.remove(x)`
+  * `list.reverse()`
 
 ## Supported functions
 * Builtin: `int`, `str`, `len`, `range`, `min`, `max`

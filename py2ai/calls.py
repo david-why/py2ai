@@ -416,4 +416,14 @@ def loads(comp, s):
 
 
 _mregister('append', ['x'])
+_mregister('clear', [])
+_mregister('copy', [])
+_mregister('count', ['x'])
+_mregister('extend', ['x'])
+_mregister('index', ['x', 'start', 'stop'], '__py2ai__meth__index__3__')
+_mregister('index', ['x', 'start'], '__py2ai__meth__index__2__')
+_mregister('index', ['x'], '__py2ai__meth__index__1__')
+_mregister('insert', ['i', 'x'])
 _mregister('pop', ['x'])
+_mregister('remove', ['x'])
+_mregister('reverse', [])
