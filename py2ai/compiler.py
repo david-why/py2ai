@@ -18,6 +18,14 @@ LIB = Path(__file__).parent / 'lib.xml'
 ADD_COMPONENTS = [
     {'$Name': '__py2ai__notifier__', '$Type': 'Notifier', '$Version': '6', 'Uuid': '1'},
     {'$Name': '__py2ai__json__', '$Type': 'Web', '$Version': '8', 'Uuid': '2'},
+    {
+        '$Name': '__py2ai__clock__',
+        '$Type': 'Clock',
+        '$Version': '4',
+        'Uuid': '3',
+        'TimerAlwaysFires': 'False',
+        'TimerEnabled': 'False',
+    },
 ]
 
 

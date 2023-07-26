@@ -415,6 +415,56 @@ def loads(comp, s):
     )
 
 
+@_aregister('time')
+def time(comp):
+    return Block(
+        'math_division',
+        values={
+            'A': Block(
+                'component_method',
+                mutations={
+                    'component_type': 'Clock',
+                    'method_name': 'SystemTime',
+                    'is_generic': 'false',
+                    'instance_name': '__py2ai__clock__',
+                },
+                fields={'COMPONENT_SELECTOR': '__py2ai__clock__'},
+            ),
+            'B': Block('math_number', fields={'NUM': '1000'}),
+        },
+    )
+
+
+@_aregister('time', ['seconds'], 'localtime')
+def localtime1(comp, seconds):
+    return comp._get_proc_block(
+        '__py2ai__localtime__', ['seconds'], [comp._visit(seconds)]
+    )
+
+
+@_aregister('time', [], 'localtime')
+def localtime0(comp):
+    return comp._get_proc_block('__py2ai__localtime__', ['seconds'], [time(comp)])
+
+
+@_aregister('time', ['format', 'tuple'], 'strftime')
+def strftime2(comp, format, tuple):
+    return comp._get_proc_block(
+        '__py2ai__strftime__',
+        ['format', 'tuple'],
+        [comp._visit(format), comp._visit(tuple)],
+    )
+
+
+@_aregister('time', ['format'], 'strftime')
+def strftime1(comp, format):
+    return comp._get_proc_block(
+        '__py2ai__strftime__',
+        ['format', 'tuple'],
+        [comp._visit(format), localtime0(comp)],
+    )
+
+
 _mregister('append', ['x'])
 _mregister('clear', [])
 _mregister('copy', [])
