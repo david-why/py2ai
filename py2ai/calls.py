@@ -64,6 +64,11 @@ def str(comp, __value):
     return comp._get_proc_block('__py2ai__str__', ['x'], [comp.visit(__value)])
 
 
+@_register(['__value'])
+def bool(comp, __value):
+    return comp._get_proc_block('__py2ai__bool__', ['x'], [comp.visit(__value)])
+
+
 @_register(['__value'], 'len')
 def _len(comp, __value):
     return comp._get_proc_block('__py2ai__len__', ['obj'], [comp.visit(__value)])
@@ -284,17 +289,6 @@ def _web_request(comp, method, url, callback=None, data=None, headers=None):
         'controls_do_then_return',
         statements={'STM': blk},
         values={'VALUE': comp._get_null_block()},
-    )
-    return Block(
-        'component_method',
-        mutations={
-            'component_type': 'Web',
-            'method_name': 'JsonTextDecodeWithDictionaries',
-            'is_generic': 'false',
-            'instance_name': '__py2ai__json__',
-        },
-        fields={'COMPONENT_SELECTOR': '__py2ai__json__'},
-        values={'ARG0': Block('text', fields={'TEXT': 'null'})},
     )
 
 
