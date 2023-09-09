@@ -1127,6 +1127,10 @@ class PythonCompiler(ast.NodeVisitor):
                 raise NotSupportedError('Call function with wrong argument count')
             call = calls[arg_len] if arg_len in calls else calls[-1]
             names, func = call
+            if arg_len not in calls:
+                if keywords:
+                    raise NotSupportedError('Call varargs function with keywords')
+                return func(self, *node.args)
             args = parse_args(names, node.args, keywords)
             return func(self, **args)
         if node.func.id not in self._procs:

@@ -131,12 +131,12 @@ def min1(comp, __iterable):
 
 
 @_register(-1)
-def min(comp, args):
+def min(comp, *args):
     return Block(
         'lists_minimum_value',
         fields={'VAR1': 'item1', 'VAR2': 'item2'},
         values={
-            'LIST': comp.visit(ast.List(elts=args, ctx=ast.Load())),
+            'LIST': comp.visit(ast.List(elts=list(args), ctx=ast.Load())),
             'COMPARE': comp._get_proc_block(
                 '__py2ai__lt__',
                 ['x', 'y'],
@@ -150,13 +150,13 @@ def min(comp, args):
 
 
 @_register(['__iterable'], 'max')
-def max1(comp, args):
+def max1(comp, __iterable):
     return Block(
         'lists_maximum_value',
         fields={'VAR1': 'item1', 'VAR2': 'item2'},
         values={
             'LIST': comp._get_proc_block(
-                '__py2ai__iter__', ['x'], [comp.visit(args[0])]
+                '__py2ai__iter__', ['x'], [comp.visit(__iterable)]
             ),
             'COMPARE': comp._get_proc_block(
                 '__py2ai__lt__',
@@ -171,12 +171,12 @@ def max1(comp, args):
 
 
 @_register(-1)
-def max(comp, args):
+def max(comp, *args):
     return Block(
         'lists_maximum_value',
         fields={'VAR1': 'item1', 'VAR2': 'item2'},
         values={
-            'LIST': comp.visit(ast.List(elts=args, ctx=ast.Load())),
+            'LIST': comp.visit(ast.List(elts=list(args), ctx=ast.Load())),
             'COMPARE': comp._get_proc_block(
                 '__py2ai__lt__',
                 ['x', 'y'],
